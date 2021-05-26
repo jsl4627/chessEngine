@@ -1,0 +1,76 @@
+@model MvcChess.Models.Board  
+ 
+
+@{
+	ViewData["Title"] = "Details";  
+}
+
+
+<head> 
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta> 
+	<title>Come and get me!</title>
+	<src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>  
+	<link rel="stylesheet" href="../../wwwroot/css/Chess.css" /> 
+</head>
+<style> 
+	div.game-board { 
+		border-style: solid; 
+	}
+	
+	table#game-board{ 
+		border-style: solid; 
+	} 
+	fieldset#game-toolbar button { 
+		padding: 9px; 
+		margin-right: 0.25em; 
+		font-size: larger; 
+		cursor: pointer; 
+		background-color: #CAECFF; 
+		border-color: #6ECCFF; 
+		border-radius: 7px; 
+	}  
+</style>  
+<body>
+<div class="page"> 
+	<h1>Come and get me!</h1> 
+	<div class="body">  
+	<div class="game-board">
+ 
+		<table>   
+			@for(var i = 0; i < 8; i++){ 
+				<tr>
+					@for(var j = 0; j < 8; j++){ 
+						<td data-celli="${j}" class="Space"> 
+							
+							@if(Model.board[i, j] != null){ 
+								@if(Model.board[i, j].white == true){
+									<div class = "Piece" 
+										id="piece-${i}-{j}" 
+										data-type='${Model.board[i, j].label}' 
+										data-color='White'> 
+									</div> 
+									 
+								} 
+								else{ 
+									<div class="Piece" 
+										id="piece-${i}-${j}" 
+										data-type='${@Model.board[i, j].label}' 
+										data-color = 'Black'> 
+									</div> 
+								}
+							} 
+						</td> 
+					} 
+				</tr> 
+			}
+		</table>  
+
+
+			 
+	</div> 	
+	
+	<audio id = "audio" src="http://www.soundjay.com/button/beep-07.mp3" autostart="false"></audio> 
+	<script data-main="/js/index.js" src="/js/require.js"></script> 
+	
+	 
+</body> 

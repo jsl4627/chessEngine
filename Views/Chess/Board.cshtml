@@ -1,0 +1,376 @@
+@model MvcChess.Models.Board; 
+
+@{
+	ViewData["Title"] = "Details";  
+}
+
+
+<head> 
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta> 
+	<title>Come and get me!</title>
+	<src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>  
+</head> 
+<style>
+	div.game-board { 
+		clear: both; 
+		width: 100%; 
+		text-align: center; 
+	} 
+
+
+	table#game-board { 
+		width: 690px; 
+		height: 690px; 
+		border-collapse: collapse; 
+		background-image: url("/img/chess_board.svg"); 
+	}  
+
+	table#game-board td > div{ 
+		width: 85px; 
+		height: 85px; 
+		background-repeat: no-repeat; 
+		background-size: contain; 
+	} 
+
+	table#game-board tr td div[data-type="P"][data-color="White"] { 
+		background-image: url("/img/white_pawn.svg"); 
+	} 
+	div[data-type='R'][data-color='White'] { 
+		border-style: solid; 
+	}
+
+
+	div[data-type='N'][data-color='White'] { 
+		border-style: solid; 
+	} 
+
+
+	div[data-type='B'][data-color='White'] { 
+		border-style: solid; 
+	} 
+
+ 
+	div[data-type='Q'][data-color='White'] { 
+		border-style: solid; 
+	} 
+
+
+
+	div[data-type='K'][data-color='White'] { 
+		border-style: solid; 
+	}
+ 
+	div[data-type='P'][data-color='Black'] { 
+		border-style: solid; 
+	} 
+	
+	div[data-type='R'][data-color='Black'] { 
+		border-style: solid; 
+	} 
+	
+	div[data-type='N'][data-color='Black'] { 
+		background-image: url("/img/black_knight.svg"); 
+		border-style: solid; 
+	} 
+	
+	div[data-type='B'][data-color='Black'] { 
+		border-style: solid; 
+	} 
+	
+	div[data-type='Q'][data-color='Black'] { 
+		border-style: solid; 
+	} 
+	div[data-type='K'][data-color='Black'] { 
+		border-style: solid; 
+	} 
+
+	table#game-board td { 
+		background-color: rgba(0, 255, 0, 0.4); 
+	}
+</style>
+
+<style> 
+	body{ 
+		background: #CAECFF;  
+		font-family: 'Trebuchet MS', sans-serif; 
+	 	font-size: 14px; 
+	} 
+
+	a { 
+		color: #2677FF; 
+	} 
+	
+	a:hover { 
+		color: #333; 
+	} 
+	a[disabled] { 
+		color: gray; 
+		cursor: default; 
+	} 
+
+	div.INFO { 
+		margin: 10px 0; 
+		background: #CAECFF; 
+		filter: brightness(115%); 
+		border: 1px solid #6ECCFF; 
+		-moz-border-radius: 2px; 
+		-webkit-border-radius: 2px; 
+		padding: 4px; 
+		font-size: 13px; 
+	} 
+	.flex-container { 
+		display: flex; 
+		flex-flow: row wrap; 
+	}  
+</style>
+<style> 
+	div[id="test"] > button{ 
+		height = 85px; 
+		width: 85px;  
+	}
+	table#game-board td > div[data-type='.'] > button { 
+		height: 85px; 
+		width: 85px; 
+	}  
+	table#game-board td > div[data-type='P'][data-color='White'] > button{
+		height: 85px; 
+		width: 85px;  
+		background-repeat: no-repeat; 
+		background-size: contain; 
+		background-image: url("/img/white_pawn.svg"); 
+		background-color: 'red';  
+	}
+
+	  
+	table#game-board td > div[data-type='R'][data-color='White'] > button{
+		height: 85px; 
+		width: 85px;  
+		background-repeat: no-repeat; 
+		background-size: contain; 
+		background-image: url("/img/white_rook.svg"); 
+	}  
+
+	table#game-board td > div[data-type='N'][data-color='White'] > button{
+		height: 85px; 
+		width: 85px;  
+		background-repeat: no-repeat; 
+		background-size: contain; 
+		background-image: url("/img/white_knight.svg"); 
+	}
+	  
+	table#game-board td > div[data-type='B'][data-color='White'] > button{
+		height: 85px; 
+		width: 85px;  
+		background-repeat: no-repeat; 
+		background-size: contain; 
+		background-image: url("/img/white_bishop.svg"); 
+	}  
+	
+	table#game-board td > div[data-type='Q'][data-color='White'] > button{
+		height: 85px; 
+		width: 85px;  
+		background-repeat: no-repeat; 
+		background-size: contain; 
+		background-image: url("/img/white_queen.svg"); 
+	} 
+	 
+	table#game-board td > div[data-type='K'][data-color='White'] > button{
+		height: 85px; 
+		width: 85px;  
+		background-repeat: no-repeat; 
+		background-size: contain; 
+		background-image: url("/img/white_king.svg"); 
+	} 
+
+	 
+	table#game-board td > div[data-type='P'][data-color='Black'] > button{
+		height: 85px; 
+		width: 85px;  
+		background-repeat: no-repeat; 
+		background-size: contain; 
+		background-image: url("/img/black_pawn.svg"); 
+	}
+
+	  
+	table#game-board td > div[data-type='R'][data-color='Black'] > button{
+		height: 85px; 
+		width: 85px;  
+		background-repeat: no-repeat; 
+		background-size: contain; 
+		background-image: url("/img/black_rook.svg"); 
+	}  
+
+	table#game-board td > div[data-type='N'][data-color='Black'] > button{
+		height: 85px; 
+		width: 85px;  
+		background-repeat: no-repeat; 
+		background-size: contain; 
+		background-image: url("/img/black_knight.svg"); 
+	}
+	  
+	table#game-board td > div[data-type='B'][data-color='Black'] > button{
+		height: 85px; 
+		width: 85px;  
+		background-repeat: no-repeat; 
+		background-size: contain; 
+		background-image: url("/img/black_bishop.svg"); 
+	}  
+	
+	table#game-board td > div[data-type='Q'][data-color='Black'] > button{
+		height: 85px; 
+		width: 85px;  
+		background-repeat: no-repeat; 
+		background-size: contain; 
+		background-image: url("/img/black_queen.svg"); 
+	} 
+	 
+	table#game-board td > div[data-type='K'][data-color='Black'] > button{
+		height: 85px; 
+		width: 85px;  
+		background-repeat: no-repeat; 
+		background-size: contain; 
+		background-image: url("/img/black_king.svg"); 
+	}  
+</style> 
+<body>
+
+<div class="page"> 
+	<h1>Come and get me!</h1>
+	<div id="test"> 
+		<button></button> 
+	</div> 
+	<div class="body"> 
+	<div id="game-controls"> 
+		<fieldset id="game-info"> 
+			<legend>Info</legend> 
+
+			<div> 
+				<table data-color = 'White'> 
+					<tr> 
+						<td><img src="/img/white_pawn.svg"/></td> 
+						<td class="name">White</td>  
+					</tr> 
+				</table> 
+				<table data-color = 'Black'> 
+					<tr> 
+						<td><img src="/img/black_pawn.svg"/></td> 
+						<td class="name">Black</td> 
+					</tr> 
+				</table> 
+			</div> 
+		</fieldset> 
+
+		<fieldset id = "game-toolbar"> 
+			<legend>Controls</legend> 
+			<div class="toolbar"></div> 
+		</fieldset> 
+	</div> 
+								
+	<div class="game-board">
+		<table id="game-board">   
+			@for(var i = 0; i < 8; i++){ 
+				<tr>
+					@for(var j = 0; j < 8; j++){ 
+						<td class = "Space">	
+							@if(Model.board[i, j] != null){ 
+								@if(Model.board[i, j].white == true){
+									<div class = "Piece" 
+										id="piece-${i}-{j}" 
+										data-type = @Model.board[i, j].label    
+										data-color="White"> 
+										<button> </button> 
+									</div> 
+									 
+								} 
+								else{ 
+									<div class="Piece" 
+										id="piece-${i}-${j}" 
+										data-type= @Model.board[i, j].label  
+
+										data-color = "Black">
+										<button> </button>  
+									</div> 
+								}
+							}
+							else{ 
+								<div class = "Piece" 
+									id="piece-${i}-{j}" 
+									data-type = "."> 
+									<button> </button>
+								</div> 
+							}  
+								
+									
+							
+						</td> 
+					} 
+				</tr> 
+			}
+		</table>  
+
+
+			 
+	</div> 	
+	
+	<script>
+		let element = document.getElementById("test");
+		e2 = element.querySelector("button"); 
+		e2.onclick = function(){ 
+			e2.style.backgroundColor = 'red';
+		};
+	</script>
+
+	<script>
+		
+		let element = document.getElementById("game-board");
+		let color_white = true;  
+		for(int i = 0; i < 8; i++){ 
+			for(int j = 0; j < 8; j++){
+				if(color_white){ 
+					element.getElementById("piece-${i}-${j}").querySelector("button").style.backgroundColor = "red"; 
+				} 
+				else{ 	
+					element.getElementById("piece-${i}-${j}").querySelector("button").style.backgroundColor = "blue"; 
+				}
+				color_white = !color_white;  
+			} 
+		} 
+				 
+				
+		let start_row = undefined; 
+		let start_col = undefined; 
+
+		let end_row = undefined; 
+		let end_col = undefined; 
+
+		for(int i = 0; i < 8; i++){ 
+			for(int j = 0; j < 8; j++){ 
+				current_element = element.getElementById("piece-${i}-${j}"); 
+				current_element.querySelector("button").onclick = function(){ 
+					if(start_row == undefined){ 
+						start_row = i; 
+						start_col = j;
+					} 
+					else{ 
+						end_row = i; 
+						end_col = j;
+						// make_move(start_row, start_col, end_row, end_col);  
+					}  
+				} 
+			}
+		}  
+	</script>
+
+
+	 	
+	<script>
+		let element = document.getElementById("test");
+		e2 = element.querySelector("button"); 
+		e2.onclick = function(){ 
+			e2.style.backgroundColor = 'red';
+		};
+	</script>
+</body>
+ 
+
+ 

@@ -1,0 +1,264 @@
+@model MvcChess.Models.Game; 
+
+@{
+	ViewData["Title"] = "Details"; 
+}
+ 
+<head>  
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta> 	
+	<h1>Come and get me!</h1> 
+</head> 
+	
+<style>
+	section{ 
+		position: absolute; 
+		top: 200px; 
+		left: 200px; 
+	} 
+	aside{ 
+		position: absolute; 
+		top: 300px; 
+		left: 910px;  
+	} 
+	td { 
+		height: 85px; 
+		width: 85px; 
+	} 
+	div#options form{ 
+		left-padding: 15px;
+	}   
+	div#test > button{ 
+		height: 85px; 
+		width: 85px; 
+		background-repeat: no-repeat; 
+		background-size: contain; 
+		background-image: url("/img/white_pawn.svg");  
+		border-style: solid;
+	}
+	table#game-board td > div[data-type='.']{ 
+		height: 85px; 
+		width: 85px; 
+		border-style: solid;
+	}  
+	table#game-board td > div[data-type='P'][data-color='White']{
+		height: 85px; 
+		width: 85px;  
+		background-repeat: no-repeat; 
+		background-size: contain; 
+		background-image: url("/img/white_pawn.svg");
+		border-style: solid;  
+	}
+
+	  
+	table#game-board td > div[data-type='R'][data-color='White']{
+		height: 85px; 
+		width: 85px;  
+		background-repeat: no-repeat; 
+		background-size: contain; 
+		background-image: url("/img/white_rook.svg");
+		border-style: solid;  
+	}  
+
+	table#game-board td > div[data-type='N'][data-color='White']{
+		height: 85px; 
+		width: 85px;  
+		background-repeat: no-repeat; 
+		background-size: contain; 
+		background-image: url("/img/white_knight.svg"); 
+		border-style: solid; 
+	}
+	  
+	table#game-board td > div[data-type='B'][data-color='White']{
+		height: 85px; 
+		width: 85px;  
+		background-repeat: no-repeat; 
+		background-size: contain; 
+		background-image: url("/img/white_bishop.svg");
+		border-style: solid;  
+	}  
+	
+	table#game-board td > div[data-type='Q'][data-color='White']{
+		height: 85px; 
+		width: 85px;  
+		background-repeat: no-repeat; 
+		background-size: contain; 
+		background-image: url("/img/white_queen.svg");
+		border-style: solid;  
+	} 
+	 
+	table#game-board td > div[data-type='K'][data-color='White']{
+		height: 85px; 
+		width: 85px;  
+		background-repeat: no-repeat; 
+		background-size: contain; 
+		background-image: url("/img/white_king.svg");
+		border-style: solid;  
+	} 
+
+	 
+	table#game-board td > div[data-type='P'][data-color='Black']{
+		height: 85px; 
+		width: 85px;  
+		background-repeat: no-repeat; 
+		background-size: contain; 
+		background-image: url("/img/black_pawn.svg"); 
+		border-style: solid; 
+	}
+
+	  
+	table#game-board td > div[data-type='R'][data-color='Black']{
+		height: 85px; 
+		width: 85px;  
+		background-repeat: no-repeat; 
+		background-size: contain; 
+		background-image: url("/img/black_rook.svg"); 
+		border-style: solid; 
+	}  
+
+	table#game-board td > div[data-type='N'][data-color='Black']{
+		height: 85px; 
+		width: 85px;  
+		background-repeat: no-repeat; 
+		background-size: contain; 
+		background-image: url("/img/black_knight.svg"); 
+		border-style: solid; 
+	}
+	  
+	table#game-board td > div[data-type='B'][data-color='Black']{
+		height: 85px; 
+		width: 85px;  
+		background-repeat: no-repeat; 
+		background-size: contain; 
+		background-image: url("/img/black_bishop.svg"); 
+		border-style: solid; 
+	}  
+	
+	table#game-board td > div[data-type='Q'][data-color='Black']{
+		height: 85px; 
+		width: 85px;  
+		background-repeat: no-repeat; 
+		background-size: contain; 
+		background-image: url("/img/black_queen.svg"); 
+		border-style: solid; 
+	} 
+	 
+	table#game-board td > div[data-type='K'][data-color='Black']{
+		height: 85px; 
+		width: 85px;  
+		background-repeat: no-repeat; 
+		background-size: contain; 
+		background-image: url("/img/black_king.svg"); 
+		border-style: solid; 
+	}  
+</style> 
+<body>
+	<section> 
+	<div class="game-board"> 		
+			<table id="game-board">  
+				<tr>
+					<td> </td> 
+					<td>0</td> 	
+					<td>1</td> 
+					<td>2</td> 
+					<td>3</td> 
+					<td>4</td> 
+					<td>5</td> 
+					<td>6</td> 
+					<td>7</td> 
+				</tr>  
+			@for(var i = 0; i < 8; i++){ 
+				<tr>	
+					@{var m = 7 - i;} 	
+					<td>@m</td> 
+
+					@for(var j = 0; j < 8; j++){ 
+						<td class = "Space">	
+							@if(Model.GameBoard.board[7 - i, j] != null){ 
+								@if(Model.GameBoard.board[7 - i, j].white == true){
+									<div class = "Piece" 
+										id=`piece-${7 - i}-${j}` 
+										data-type = @Model.GameBoard.board[7 - i, j].label    
+										data-color="White"> 
+									</div> 
+									 
+								} 
+								else{ 
+									<div class="Piece" 
+										id=`piece-${7 - i}-${j}` 
+										data-type= @Model.GameBoard.board[7 - i, j].label  
+
+										data-color = "Black">
+									</div> 
+								}
+							}
+							else{ 
+								<div class = "Piece" 
+									id=`piece-${7 - i}-${j}` 
+									data-type = "."> 
+								</div> 
+							}  
+								
+									
+							
+						</td> 
+					} 
+				</tr> 
+			}
+		
+				<tr>
+					<td> </td> 
+					<td>0</td> 	
+					<td>1</td> 
+					<td>2</td> 
+					<td>3</td> 
+					<td>4</td> 
+					<td>5</td> 
+					<td>6</td> 
+					<td>7</td> 
+				</tr>  
+		</table>
+		</div> 
+		</section> 
+	<aside> 
+	<div id = "options"> 
+		<form action="/Chess/Move/?start_row=${start_row}&start_col=${start_col}&end_row=${end_row}&end_col=${end_col}"> 
+			<label for="start row">Start Row:</label> 
+			<input type="text" id="start row" name="start_row"><br><br>
+
+			<label for="start col">Start Col:</label> 
+			<input type="text" id="start col" name="start_col"><br><br> 
+
+			<label for="end row">End Row:</label> 
+			<input type="text" id="end row" name = "end_row"><br><br> 
+			
+			<label for="end col">End Col:</label> 
+			<input type="text" id="end col" name = "end_col"><br><br>
+
+			<input type="submit" value="Make Move"> 
+		</form>
+		<form action="/Chess/OpponentMove/">
+			<input type="submit" value = "Opponent Move"> 
+		</form> 
+	</div>
+	</aside>
+
+	<script>
+		let white = true; 
+		for(let i = 10; i <= 80; i++){ 
+			if(i % 9 != 0){
+				if(white == true){ 
+					document.getElementsByTagName("td")[i].style.backgroundColor = "LightGray";  
+					white = false; 
+				} 
+				else{ 	
+					document.getElementsByTagName("td")[i].style.backgroundColor = "Gray"; 
+					white = true; 
+				} 
+			}
+			else{ 
+				white = !white; 
+			}  
+		} 	
+	</script> 
+				 
+</body> 

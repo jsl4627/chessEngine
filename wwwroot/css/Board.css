@@ -1,0 +1,31 @@
+/* 
+* Game view styles 
+*/  
+
+/* 
+* Game board styles 
+*/ 
+div.game-board { 
+	clear: both; 
+	width: 100%; 
+	text-align: center; 
+} 
+
+table#game-board { 
+	width: 690px; 
+	height: 690px; 
+	border-collapse: collapse; 
+} 
+
+table#game-board > tbody { 
+	width: 680px; 
+	height: 680px; 
+	display: block; 
+	padding: 5px; 
+} 
+
+table#game-board td { 
+	width: 85px; 
+	height: 85px; 
+	padding: 0px; 
+} 
