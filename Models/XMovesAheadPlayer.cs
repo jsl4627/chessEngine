@@ -93,19 +93,19 @@ public class XMovesAheadPlayer : Player{
 					piece_matrix[i, j] = 0; 
 				}
 				else if(config.board[i, j].label == 'P'){ 
-					piece_matrix[i, j] = 1 * (white == config.board[i, j].white?1:-1);
+					piece_matrix[i, j] = 1 * (this.white == config.board[i, j].white?1:-1);
 				} 
 				else if(config.board[i, j].label == 'N'){ 
-					piece_matrix[i, j] = 3 * (white == config.board[i, j].white?1:-1); 
+					piece_matrix[i, j] = 3 * (this.white == config.board[i, j].white?1:-1); 
 				} 
 				else if(config.board[i, j].label == 'B'){ 
-					piece_matrix[i, j] = 3 * (white == config.board[i, j].white?1:-1);  
+					piece_matrix[i, j] = 3 * (this.white == config.board[i, j].white?1:-1);  
 				} 
 				else if(config.board[i, j].label == 'Q'){	
-					piece_matrix[i, j] = 9 * (white == config.board[i, j].white?1:-1);  
+					piece_matrix[i, j] = 9 * (this.white == config.board[i, j].white?1:-1);  
 				}
 				else if(config.board[i, j].label == 'K'){ 
-					piece_matrix[i, j] = 4 * (white == config.board[i, j].white?1:-1);  
+					piece_matrix[i, j] = 4 * (this.white == config.board[i, j].white?1:-1);  
 				}
 			}
 		}  
@@ -136,22 +136,13 @@ public class XMovesAheadPlayer : Player{
 				position_matrix[i, j] = position_matrix[7 - i, j]; 
 			} 
 		}  
-		if(test){ 
-			string str = ""; 
-			for(int i = 0; i < 8; i++){ 
-				for(int j = 0; j < 8; j++){ 
-					str += piece_matrix[i, j].ToString() + " "; 
-				} 
-				str += "\n"; 
-			} 
-			Console.WriteLine(str); 
-		} 
 		int score = 0; 
 		for(int i = 0; i < 8; i++){ 
 			for(int j = 0; j < 8; j++){ 
-				score += position_matrix[i, j] * position_matrix[i, j]; 
+				score += position_matrix[i, j] * piece_matrix[i, j]; 
 			} 
 		} 
+		Console.WriteLine(score); 
 		return score; 
 	} 
 		
@@ -160,7 +151,7 @@ public class XMovesAheadPlayer : Player{
 	public obj MiniMax(Board config, int depth, bool white){ 
 		Dynarray<Board> successors = config.getSuccessors(white);
 		if(depth == 0 || config.checkMate(white)){ 
-			int score = evaluate_config3(config, this.white, false); 
+			int score = evaluate_config3(config, white, true); 
 			return new obj(config, score); 
 		}
 		else{
@@ -195,7 +186,6 @@ public class XMovesAheadPlayer : Player{
 		 
 	public override void move(Piece piece, int row, int col){
  		obj optimal_obj = this.MiniMax(this.board, this.depth, this.white);
-		Console.WriteLine(evaluate_config3(this.board, false, true)); 
 		this.board.board = optimal_obj.config.board;
 		this.board.kings = optimal_obj.config.kings; 
 		this.board.kings[Convert.ToInt32(this.white)].in_check = false; 	
