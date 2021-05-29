@@ -94,6 +94,7 @@ public class Board{
 						Dynarray<Coordinate> legal_moves = current_piece.moves(this);
 						for(int k = 0; k < legal_moves.size; k++){
 							Board copy = new Board(this);
+					
 							try{ 
 								bool is_king_in_check = copy.kings[Convert.ToInt32(white)].in_check; 
 							} 
@@ -104,7 +105,6 @@ public class Board{
 								copy.kings[Convert.ToInt32(white)].in_check = false; 
 							} 
 							catch(NullReferenceException e){
-								Console.WriteLine(this); 
 								copy.kings[Convert.ToInt32(white)].in_check = false;  
 							} 
 							Piece copy_piece = copy.board[i, j];  
@@ -114,6 +114,9 @@ public class Board{
 							copy_piece.row = current_move.row; 
 							copy_piece.col = current_move.col; 
 							copy_piece.moves_made++;
+							if(this.kings[Convert.ToInt32(!white)].row == copy_piece.row && this.kings[Convert.ToInt32(!white)].col == copy_piece.col){ 
+								copy.kings[Convert.ToInt32(!white)] = null; 
+							} 
 							if(copy_piece.label == 'K'){
 								copy.kings[Convert.ToInt32(white)].row = copy_piece.row;
 								copy.kings[Convert.ToInt32(white)].col = copy_piece.col;	
@@ -125,7 +128,7 @@ public class Board{
 									} 
 								} 
 							}
-							if(!copy.kings[Convert.ToInt32(white)].in_check){ 
+							if(!copy.kings[Convert.ToInt32(white)].in_check && copy.kings != null && copy.kings[Convert.ToInt32(white)] != null && copy.kings[Convert.ToInt32(!white)] != null){ 
 								successors.append(copy);  
 							}
 						}
@@ -179,8 +182,13 @@ public class Board{
 				if(this.board[row, col] == null){ 
 					boardString += "."; 
 				} 
-				else{ 
-					boardString += this.board[row, col].ToString(); 
+				else{
+					if(this.board[row, col].white){ 
+						boardString += this.board[row, col].ToString(); 
+					}
+					else{ 
+						boardString += Char.ToLower(this.board[row, col].label).ToString(); 
+					} 
 				} 
 			} 
 			boardString += "\n"; 

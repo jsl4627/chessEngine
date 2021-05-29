@@ -1,4 +1,5 @@
-using System; 
+using System;
+using System.Collections;  
 
 using System.ComponentModel.DataAnnotations; 
 
@@ -8,10 +9,12 @@ public class XMovesAheadPlayer : Player{
 	public class obj{ 
 		public Board config; 
 		public int score; 
+		public Hashtable choiceTable; 
 		
-		public obj(Board config, int score){ 
+		public obj(Board config, int score, Hashtable choiceTable){ 
 			this.config = config; 
 			this.score = score; 
+			this.choiceTable = choiceTable; 
 		} 	
 	}  
 	
@@ -148,36 +151,51 @@ public class XMovesAheadPlayer : Player{
 		
 
 
-	public obj MiniMax(Board config, int depth, bool white){ 
+	public obj MiniMax(Board config, int depth, bool white, Hashtable choiceTable){ 
 		Dynarray<Board> successors = config.getSuccessors(white);
 		if(depth == 0 || config.checkMate(white)){ 
-			int score = evaluate_config3(config, white, true); 
-			return new obj(config, score); 
+			int score = evaluate_config2(config, white); 
+			choiceTable.Add(config.ToString(), score);  
+			return new obj(config, score, choiceTable); 
 		}
 		else{
 			if(this.white == white){ 
 				int max_score = -1000000; 
 				int max_index = 0;
 				for(int i = 0; i < successors.size; i++){
-					obj new_obj = this.MiniMax(successors.get(i), depth - 1, !white); 
+					obj new_obj = null; 
+					if(choiceTable.ContainsKey(successors.get(i).ToString())){ 
+						new_obj = new obj(successors.get(i), (int) choiceTable[successors.get(i).ToString()], choiceTable); 
+					} 
+					else{ 
+						new_obj = this.MiniMax(successors.get(i), depth - 1, !white, choiceTable);
+					}
+					choiceTable = new_obj.choiceTable;  
 					if(new_obj.score > max_score){ 
 						max_score = new_obj.score; 
 						max_index = i; 
 					} 
 				}	
-				return new obj(successors.get(max_index), max_score); 
+				return new obj(successors.get(max_index), max_score, choiceTable); 
 			} 
 			else{ 
 				int min_score = 1000000; 
 				int min_index = 0;
 				for(int i = 0; i < successors.size; i++){
-					obj new_obj = this.MiniMax(successors.get(i), depth - 1, !white); 
+					obj new_obj = null; 
+					if(choiceTable.ContainsKey(successors.get(i).ToString())){ 
+						new_obj = new obj(successors.get(i), (int) choiceTable[successors.get(i).ToString()], choiceTable); 
+					} 
+					else{ 
+						new_obj = this.MiniMax(successors.get(i), depth - 1, !white, choiceTable); 
+					} 
+					choiceTable = new_obj.choiceTable; 
 					if(new_obj.score < min_score){ 
 						min_score = new_obj.score; 
 						min_index = i; 
 					} 
 				} 
-				return new obj(successors.get(min_index), min_score); 
+				return new obj(successors.get(min_index), min_score, choiceTable); 
 			}
 			
 		}
@@ -185,7 +203,7 @@ public class XMovesAheadPlayer : Player{
 	} 
 		 
 	public override void move(Piece piece, int row, int col){
- 		obj optimal_obj = this.MiniMax(this.board, this.depth, this.white);
+ 		obj optimal_obj = this.MiniMax(this.board, this.depth, this.white, new Hashtable());
 		this.board.board = optimal_obj.config.board;
 		this.board.kings = optimal_obj.config.kings; 
 		this.board.kings[Convert.ToInt32(this.white)].in_check = false; 	

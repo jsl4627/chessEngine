@@ -4,7 +4,8 @@ using System;
 using System.Text.Encodings.Web;
 using System.IO; 
 using System.Collections; 
-using System.Web; 
+using System.Web;
+using System.Diagnostics;  
 using MvcChess.Models;
 
 namespace MvcChess.Controllers{
@@ -26,23 +27,23 @@ namespace MvcChess.Controllers{
 						board_array[i, j] = null; 
 					}
 					else{
-						bool white = colors_line[j] == 'W';  
-						if(pieces_line[j] == 'P'){ 
+						bool white = Char.ToUpper(pieces_line[j]) == pieces_line[j];  
+						if(pieces_line[j] == 'P' || pieces_line[j] == 'p'){ 
 							board_array[i, j] = new Piece('P', i, j, white);
 						}
-						else if(pieces_line[j] == 'R'){ 
+						else if(pieces_line[j] == 'R' || pieces_line[j] == 'r'){ 
 							board_array[i, j] = new Rook('R', i, j, white); 
 						} 
-						else if(pieces_line[j] == 'N'){ 
+						else if(pieces_line[j] == 'N' || pieces_line[j] == 'n'){ 
 							board_array[i, j] = new Knight('N', i, j, white); 
 						} 
-						else if(pieces_line[j] == 'B'){ 
+						else if(pieces_line[j] == 'B' || pieces_line[j] == 'b'){ 
 							board_array[i, j] = new Bishop('B', i, j, white); 
 						} 
-						else if(pieces_line[j] == 'Q'){ 
+						else if(pieces_line[j] == 'Q' || pieces_line[j] == 'q'){ 
 							board_array[i, j] = new Queen('Q', i, j, white); 
 						} 
-						else{
+						else if(pieces_line[j] == 'K' || pieces_line[j] == 'k'){
 							board_array[i, j] = new King('K', i, j, white); 
 							kings[Convert.ToInt32(white)] =  (King) board_array[i, j];
 						}  
@@ -76,7 +77,6 @@ namespace MvcChess.Controllers{
 			Player Player1 = new Player(true, board); 
 			XMovesAheadPlayer Player2 = new XMovesAheadPlayer(false, board, moves_ahead); 
 			Game game = new Game(Player1, Player2); 
-
 			return View(game); 
 		} 	
 
@@ -109,7 +109,6 @@ namespace MvcChess.Controllers{
 			file.Flush(); 
 			file.Close(); 
 
-
 			return RedirectToAction("Game");  
 		}  
 		
@@ -122,7 +121,7 @@ namespace MvcChess.Controllers{
 		}
 
 		//POST: /Chess/OpponentMove/ 
-		public IActionResult OpponentMove(int moves_ahead = 3){ 
+		public IActionResult OpponentMove(int moves_ahead = 4){ 
 			
 			string[] lines = System.IO.File.ReadAllLines("Write_Board_Pieces.txt"); 
 			
@@ -138,23 +137,23 @@ namespace MvcChess.Controllers{
 						board_array[i, j] = null; 
 					}
 					else{
-						bool white = colors_line[j] == 'W';  
-						if(pieces_line[j] == 'P'){ 
+						bool white = Char.ToUpper(pieces_line[j]) == pieces_line[j];  
+						if(pieces_line[j] == 'P' || pieces_line[j] == 'p'){ 
 							board_array[i, j] = new Piece('P', i, j, white);
 						}
-						else if(pieces_line[j] == 'R'){ 
+						else if(pieces_line[j] == 'R' || pieces_line[j] == 'r'){ 
 							board_array[i, j] = new Rook('R', i, j, white); 
 						} 
-						else if(pieces_line[j] == 'N'){ 
+						else if(pieces_line[j] == 'N' || pieces_line[j] == 'n'){ 
 							board_array[i, j] = new Knight('N', i, j, white); 
 						} 
-						else if(pieces_line[j] == 'B'){ 
+						else if(pieces_line[j] == 'B' || pieces_line[j] == 'b'){ 
 							board_array[i, j] = new Bishop('B', i, j, white); 
 						} 
-						else if(pieces_line[j] == 'Q'){ 
+						else if(pieces_line[j] == 'Q' || pieces_line[j] == 'q'){ 
 							board_array[i, j] = new Queen('Q', i, j, white); 
 						} 
-						else{
+						else if(pieces_line[j] == 'K' || pieces_line[j] == 'k'){
 							board_array[i, j] = new King('K', i, j, white); 
 							kings[Convert.ToInt32(white)] =  (King) board_array[i, j];
 						}  
@@ -180,8 +179,11 @@ namespace MvcChess.Controllers{
 			XMovesAheadPlayer Player2 = new XMovesAheadPlayer(false, board, moves_ahead); 		
 			
 			Game game = new Game(Player1, Player2);  
-					
-			game.Player2.move(null, 0, 0); 
+			Stopwatch timer = new Stopwatch(); 
+			timer.Start(); 		
+			game.Player2.move(null, 0, 0);
+			timer.Stop(); 
+			Console.WriteLine(timer.Elapsed);  
 		
 			ViewData["Game"] = game;
 
@@ -216,23 +218,23 @@ namespace MvcChess.Controllers{
 						board_array[i, j] = null; 
 					}
 					else{
-						bool white = colors_line[j] == 'W';  
-						if(pieces_line[j] == 'P'){ 
+						bool white = Char.ToUpper(pieces_line[j]) == pieces_line[j];  
+						if(pieces_line[j] == 'P' || pieces_line[j] == 'p'){ 
 							board_array[i, j] = new Piece('P', i, j, white);
 						}
-						else if(pieces_line[j] == 'R'){ 
+						else if(pieces_line[j] == 'R' || pieces_line[j] == 'r'){ 
 							board_array[i, j] = new Rook('R', i, j, white); 
 						} 
-						else if(pieces_line[j] == 'N'){ 
+						else if(pieces_line[j] == 'N' || pieces_line[j] == 'n'){ 
 							board_array[i, j] = new Knight('N', i, j, white); 
 						} 
-						else if(pieces_line[j] == 'B'){ 
+						else if(pieces_line[j] == 'B' || pieces_line[j] == 'b'){ 
 							board_array[i, j] = new Bishop('B', i, j, white); 
 						} 
-						else if(pieces_line[j] == 'Q'){ 
+						else if(pieces_line[j] == 'Q' || pieces_line[j] == 'q'){ 
 							board_array[i, j] = new Queen('Q', i, j, white); 
 						} 
-						else{
+						else if(pieces_line[j] == 'K' || pieces_line[j] == 'k'){
 							board_array[i, j] = new King('K', i, j, white); 
 							kings[Convert.ToInt32(white)] =  (King) board_array[i, j];
 						}  
