@@ -184,10 +184,20 @@ public class Board{
 				} 
 				else{
 					if(this.board[row, col].white){ 
-						boardString += this.board[row, col].ToString(); 
+						if(this.board[row, col].label == 'K' && this.kings[1].in_check){
+							boardString += 'X'; 
+						} 
+						else{ 
+							boardString += this.board[row, col].ToString(); 
+						} 
 					}
 					else{ 
-						boardString += Char.ToLower(this.board[row, col].label).ToString(); 
+						if(this.board[row, col].label == 'K' && this.kings[0].in_check){ 
+							boardString += 'x'; 
+						} 
+						else{ 
+							boardString += Char.ToLower(this.board[row, col].label).ToString(); 
+						} 
 					} 
 				} 
 			} 

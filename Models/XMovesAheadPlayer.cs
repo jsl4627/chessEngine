@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 namespace MvcChess.Models{ 
 public class XMovesAheadPlayer : Player{ 
 	public int depth;
+	public int[] aux; 
 	public class obj{ 
 		public Board config; 
 		public int score; 
@@ -20,6 +21,8 @@ public class XMovesAheadPlayer : Player{
 	
 	public XMovesAheadPlayer(bool white, Board board, int depth) : base(white, board){ 
 		this.depth = depth;
+		
+		this.aux = new int[] {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 1, 1, 2, 4, 4, 2, 1, 1, 1, 1, 2, 4, 4, 2, 1, 1, 1, 1, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 	}
 	
 
@@ -150,52 +153,188 @@ public class XMovesAheadPlayer : Player{
 	} 
 		
 
+	
+	public int evaluate_config4(Board config){ 
+		int[] board_vector = new int[64]; 
+		int board_vector_index = 0; 
+		for(int i = 0; i < 8; i++){ 
+			for(int j = 0; j < 8; j++){
+				if(config.board[i, j] == null){ 
+					board_vector[board_vector_index] = 0; 
+				} 
+				else if(config.board[i, j].white == this.white){ 
+					board_vector[board_vector_index] = config.board[i, j].points;
+			 
+				} 
+				
+				else{ 
+					board_vector[board_vector_index] = times(-1, config.board[i, j].points); 
+				 
+				} 
+				board_vector_index++; 
+			}
+		}
+		// 1 1 1 1 1 1 1 1
+		// 1 1 1 1 1 1 1 1 
+		// 1 1 2 2 2 2 1 1 
+		// 1 1 2 4 4 1 1 1  
+		// 1 1 2 4 4 1 1 1 
+		// 1 1 2 2 2 1 1 1 
+		// 1 1 1 1 1 1 1 1 
+		// 1 1 1 1 1 1 1 1 	
+		int total_score = 0; 
+		for(int i = 0; i < 64; i++){ 
+			total_score += times(this.aux[i], board_vector[i]);
+		}  
+		return total_score; 
+	} 
+	public int head_count(Board config, bool white){
+		int headCount = 0; 
+		for(int i = 0; i < 8; i++){ 
+			for(int j = 0; j < 8; j++){ 
+				if(config.board[i, j] != null && config.board[i, j].white == white){ 
+					headCount += config.board[i, j].points; 
+				} 
+			} 
+		} 
+		return headCount; 
+	}
+	public Dynarray<Board> prune_successors(Dynarray<Board> successors, bool white, Board config){ 
+		Dynarray<Board> pruned_successors = new Dynarray<Board>();
+		int config_body_count = head_count(config, !white); 
+		bool free_piece = false;  
+		for(int i = 0; i < successors.size; i++){
+			bool pruned = false;  
+			Board current_successor = successors.get(i); 
+			// check if the rook pawn or knight pawn was moved
+			if(current_successor.board[3, 0] != null || current_successor.board[3, 1] != null || current_successor.board[3, 6] != null || current_successor.board[3, 7] != null){
+				pruned = true; 
+			} 
+			if(current_successor.board[4, 0] != null || current_successor.board[4, 1] != null || current_successor.board[4, 6] != null || current_successor.board[4, 7] != null){ 
+				pruned = true;  
+			} 
+			// check if there is a piece on the rim 
+			if(current_successor.board[2, 0] != null || current_successor.board[2, 7] != null || current_successor.board[5, 0] != null || current_successor.board[5, 7] != null){ 
+				pruned = true; 
+			} 
+			// prune if the white king is not on E1 
+			//if(current_successor.board[0, 4] == null && config.kings[1].in_check == false && config.board[0, 4] != null && config.board[0, 4].label == 'K'){ 
+			//	pruned = true; 
+			//} 
+			// prune if the black king is not on E8 
+			//if(current_successor.board[7, 4] == null && config.kings[0].in_check == false && config.board[7, 4] != null && config.board[7, 4].label == 'K'){ 
+			//	pruned = true; 
+			//}
+			// prune if the white rooks are not on the first row
+			//int num_rooks_on_first_row = 0;  
+			//for(int col = 0; col < 8; col++){
+			//	if(current_successor.board[0, col] != null && current_successor.board[0, col].label == 'R'){ 
+			//		num_rooks_on_first_row++; 
+			//	} 
+			//} 
+			//if(num_rooks_on_first_row != 2){ 
+			//	pruned = true; 
+			//}
+			// prune if the black rooks are not on the eighth row
+			//int num_rooks_on_eighth_row = 0;  
+			//for(int col = 0; col < 8; col++){ 
+			//	if(current_successor.board[7, col] != null && current_successor.board[7, col].label == 'R'){ 
+			//		  num_rooks_on_eighth_row++; 
+			//	} 
+			//} 
+			//if(num_rooks_on_eighth_row != 2){ 
+			//	pruned = true; 
+			//} 
+			// prune if a queen can be captured in other successors but not in the current one 
+			//bool free_piece_successor = head_count(successors.get(i), !white) - config_body_count <= -9; 
+			//if(free_piece_successor){ 
+				//free_piece = true; 
+			//} 
+			//else if(free_piece){ 
+			//	pruned = true; 
+			//} 
+				
+			
+	
+			if(!pruned){ 
+				pruned_successors.append(current_successor); 
+			} 
+		} 
+		return pruned_successors; 
+	} 
 
-	public obj MiniMax(Board config, int depth, bool white, Hashtable choiceTable){ 
+	public obj MiniMax(Board config, int depth, bool white, Hashtable choiceTable, int alpha, int beta){ 
 		Dynarray<Board> successors = config.getSuccessors(white);
+		
 		if(depth == 0 || config.checkMate(white)){ 
-			int score = evaluate_config2(config, white); 
+			int score = evaluate_config4(config); 
 			choiceTable.Add(config.ToString(), score);  
 			return new obj(config, score, choiceTable); 
 		}
 		else{
 			if(this.white == white){ 
-				int max_score = -1000000; 
-				int max_index = 0;
+				int max_score = -1000; 
+				int max_index = -1;
+				//successors = prune_successors(successors, this.white, config); 
 				for(int i = 0; i < successors.size; i++){
-					obj new_obj = null; 
-					if(choiceTable.ContainsKey(successors.get(i).ToString())){ 
-						new_obj = new obj(successors.get(i), (int) choiceTable[successors.get(i).ToString()], choiceTable); 
-					} 
-					else{ 
-						new_obj = this.MiniMax(successors.get(i), depth - 1, !white, choiceTable);
-					}
-					choiceTable = new_obj.choiceTable;  
-					if(new_obj.score > max_score){ 
-						max_score = new_obj.score; 
-						max_index = i; 
-					} 
-				}	
-				return new obj(successors.get(max_index), max_score, choiceTable); 
+						obj new_obj = null; 
+						if(choiceTable.ContainsKey(successors.get(i).ToString())){ 
+							new_obj = new obj(successors.get(i), (int) choiceTable[successors.get(i).ToString()], choiceTable); 
+						}	 
+						else{
+															 
+							new_obj = this.MiniMax(successors.get(i), depth - 1, !white, choiceTable, max_score, beta);
+						}
+					if(new_obj != null){ 
+						choiceTable = new_obj.choiceTable; 
+						
+						if(new_obj.score > max_score){ 
+							max_score = new_obj.score; 
+							max_index = i; 
+						}
+						if(new_obj.score > beta){ 
+							return null; 
+						}
+					}		 
+				}
+				if(max_index > -1){
+					return new obj(successors.get(max_index), max_score, choiceTable); 
+				} 
+				else{ 
+					return null; 
+				} 
 			} 
 			else{ 
-				int min_score = 1000000; 
-				int min_index = 0;
+				int min_score = 1000; 
+				int min_index = -1;
+				//successors = prune_successors(successors, !this.white, config); 
 				for(int i = 0; i < successors.size; i++){
 					obj new_obj = null; 
 					if(choiceTable.ContainsKey(successors.get(i).ToString())){ 
 						new_obj = new obj(successors.get(i), (int) choiceTable[successors.get(i).ToString()], choiceTable); 
 					} 
 					else{ 
-						new_obj = this.MiniMax(successors.get(i), depth - 1, !white, choiceTable); 
-					} 
-					choiceTable = new_obj.choiceTable; 
-					if(new_obj.score < min_score){ 
-						min_score = new_obj.score; 
-						min_index = i; 
-					} 
+						new_obj = this.MiniMax(successors.get(i), depth - 1, !white, choiceTable, alpha, min_score); 
+					}
+					if(new_obj != null){ 
+						choiceTable = new_obj.choiceTable; 
+					
+						
+						if(new_obj.score < min_score){ 
+							min_score = new_obj.score; 
+							min_index = i; 
+						} 
+						if(new_obj.score < alpha){
+							return null; 
+						}
+					}  
+				}
+				if(min_index > -1){ 	
+					return new obj(successors.get(min_index), min_score, choiceTable); 
 				} 
-				return new obj(successors.get(min_index), min_score, choiceTable); 
+				else{ 
+					return null; 
+				} 
 			}
 			
 		}
@@ -203,7 +342,7 @@ public class XMovesAheadPlayer : Player{
 	} 
 		 
 	public override void move(Piece piece, int row, int col){
- 		obj optimal_obj = this.MiniMax(this.board, this.depth, this.white, new Hashtable());
+ 		obj optimal_obj = this.MiniMax(this.board, this.depth, this.white, new Hashtable(), -1000, 1000);
 		this.board.board = optimal_obj.config.board;
 		this.board.kings = optimal_obj.config.kings; 
 		this.board.kings[Convert.ToInt32(this.white)].in_check = false; 	

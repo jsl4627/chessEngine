@@ -46,6 +46,12 @@ namespace MvcChess.Controllers{
 						else if(pieces_line[j] == 'K' || pieces_line[j] == 'k'){
 							board_array[i, j] = new King('K', i, j, white); 
 							kings[Convert.ToInt32(white)] =  (King) board_array[i, j];
+							kings[Convert.ToInt32(white)].in_check = false; 
+						} 
+						else if(pieces_line[j] == 'X' || pieces_line[j] == 'x'){ 
+							board_array[i, j] = new King('K', i, j, white); 
+							kings[Convert.ToInt32(white)] = (King) board_array[i, j]; 
+							kings[Convert.ToInt32(white)].in_check = true; 
 						}  
 										
 					}
@@ -121,7 +127,7 @@ namespace MvcChess.Controllers{
 		}
 
 		//POST: /Chess/OpponentMove/ 
-		public IActionResult OpponentMove(int moves_ahead = 4){ 
+		public IActionResult OpponentMove(int moves_ahead = 5){ 
 			
 			string[] lines = System.IO.File.ReadAllLines("Write_Board_Pieces.txt"); 
 			
@@ -156,7 +162,13 @@ namespace MvcChess.Controllers{
 						else if(pieces_line[j] == 'K' || pieces_line[j] == 'k'){
 							board_array[i, j] = new King('K', i, j, white); 
 							kings[Convert.ToInt32(white)] =  (King) board_array[i, j];
+							kings[Convert.ToInt32(white)].in_check = false; 
 						}  
+						else if(pieces_line[j] == 'X' || pieces_line[j] == 'x'){ 
+							board_array[i, j] = new King('K', i, j, white); 
+							kings[Convert.ToInt32(white)] = (King) board_array[i, j]; 
+							kings[Convert.ToInt32(white)].in_check = true; 
+						} 
 										
 					}
 				}
@@ -237,7 +249,13 @@ namespace MvcChess.Controllers{
 						else if(pieces_line[j] == 'K' || pieces_line[j] == 'k'){
 							board_array[i, j] = new King('K', i, j, white); 
 							kings[Convert.ToInt32(white)] =  (King) board_array[i, j];
-						}  
+							kings[Convert.ToInt32(white)].in_check = false; 
+						} 
+						else if(pieces_line[j] == 'X' || pieces_line[j] == 'x'){ 
+							board_array[i, j] = new King('K', i, j, white); 
+							kings[Convert.ToInt32(white)] = (King) board_array[i, j]; 
+							kings[Convert.ToInt32(white)].in_check = true; 
+						} 
 										
 					}
 				}
