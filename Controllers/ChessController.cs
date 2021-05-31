@@ -127,7 +127,7 @@ namespace MvcChess.Controllers{
 		}
 
 		//POST: /Chess/OpponentMove/ 
-		public IActionResult OpponentMove(int moves_ahead = 5){ 
+		public IActionResult OpponentMove(int moves_ahead = 6){ 
 			
 			string[] lines = System.IO.File.ReadAllLines("Write_Board_Pieces.txt"); 
 			
