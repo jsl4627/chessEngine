@@ -263,27 +263,72 @@ public class XMovesAheadPlayer : Player{
 		return pruned_successors; 
 	} 
 
-	public obj MiniMax(Board config, int depth, bool white, Hashtable choiceTable, int alpha, int beta){ 
+	public obj MiniMax(Board config, int depth, bool white, Hashtable choiceTable, int alpha, int beta, int R, bool null_move, bool cut){ 
 		Dynarray<Board> successors = config.getSuccessors(white);
 		
 		if(depth == 0 || config.checkMate(white)){ 
 			int score = evaluate_config4(config); 
-			choiceTable.Add(config.ToString(), score);  
+			if(!null_move && !cut){
+				choiceTable.Add(config.ToString(), score);  
+			} 
 			return new obj(config, score, choiceTable); 
 		}
 		else{
 			if(this.white == white){ 
 				int max_score = -1000; 
 				int max_index = -1;
+				obj new_obj = null;
+				//null move pruning  
+				//if(!null_move && max_score > -1000 && depth > 2 && !cut){ 
+				//	new_obj = this.MiniMax(config, 2, !white, choiceTable, max_score, beta, R - 1, true, false);
+				//}
+				//if(new_obj != null && new_obj.score > beta){ 
+				//	return new obj(config, beta, choiceTable); 
+				//}
+				
+				// multi-cut pruning 
+				//if(!cut){ 
+					//int M = 6 <= successors.size?6:successors.size; 
+					//int C = 3;
+					//int c = 0;  
+					//if(depth >= 2 && !null_move && !cut && max_score > -1000){ 
+						//for(int k = 0; k < M; k++){ 
+							//new_obj = this.MiniMax(successors.get(k), 1, !white, choiceTable, max_score, beta, R, null_move, true);  
+							//if(new_obj.score >= beta){
+								//c++;
+								//if(c == C){ 
+									//return new obj(config, beta, choiceTable); 
+								//} 
+							//} 
+						//}
+					//} 
+			 
+								
+				//}
+				// TODO: Test ProbCut Pruning.
+				//double T = 1.5; 
+				//int DP = 2; 
+				//int D = 4;
+				//if(depth == D){  
+					//int bound = Convert.ToInt32(T * alpha + beta); 
+					//new_obj = MiniMax(config, DP, !white, choiceTable, alpha, bound, R, false, false); 
+					//if(new_obj != null && new_obj.score >= bound){ 
+						//return null; 
+					//} 
+				//}  	
+				//////////////////////	
+				 
 				//successors = prune_successors(successors, this.white, config); 
 				for(int i = 0; i < successors.size; i++){
-						obj new_obj = null; 
+						new_obj = null;
+
+
 						if(choiceTable.ContainsKey(successors.get(i).ToString())){ 
 							new_obj = new obj(successors.get(i), (int) choiceTable[successors.get(i).ToString()], choiceTable); 
 						}	 
 						else{
 															 
-							new_obj = this.MiniMax(successors.get(i), depth - 1, !white, choiceTable, max_score, beta);
+							new_obj = this.MiniMax(successors.get(i), depth - 1, !white, choiceTable, max_score, beta, R, null_move, cut);
 						}
 					if(new_obj != null){ 
 						choiceTable = new_obj.choiceTable; 
@@ -292,8 +337,8 @@ public class XMovesAheadPlayer : Player{
 							max_score = new_obj.score; 
 							max_index = i; 
 						}
-						if(new_obj.score > beta){ 
-							return null; 
+						if(new_obj.score >= beta){ 
+							return new obj(config, beta, choiceTable); 
 						}
 					}		 
 				}
@@ -314,7 +359,7 @@ public class XMovesAheadPlayer : Player{
 						new_obj = new obj(successors.get(i), (int) choiceTable[successors.get(i).ToString()], choiceTable); 
 					} 
 					else{ 
-						new_obj = this.MiniMax(successors.get(i), depth - 1, !white, choiceTable, alpha, min_score); 
+						new_obj = this.MiniMax(successors.get(i), depth - 1, !white, choiceTable, alpha, min_score, R, null_move, cut); 
 					}
 					if(new_obj != null){ 
 						choiceTable = new_obj.choiceTable; 
@@ -324,8 +369,8 @@ public class XMovesAheadPlayer : Player{
 							min_score = new_obj.score; 
 							min_index = i; 
 						} 
-						if(new_obj.score < alpha){
-							return null; 
+						if(new_obj.score <= alpha){
+							return new obj(config, alpha, choiceTable); 
 						}
 					}  
 				}
@@ -342,7 +387,7 @@ public class XMovesAheadPlayer : Player{
 	} 
 		 
 	public override void move(Piece piece, int row, int col){
- 		obj optimal_obj = this.MiniMax(this.board, this.depth, this.white, new Hashtable(), -1000, 1000);
+ 		obj optimal_obj = this.MiniMax(this.board, this.depth, this.white, new Hashtable(), -1000, 1000, 1, false, false);
 		this.board.board = optimal_obj.config.board;
 		this.board.kings = optimal_obj.config.kings; 
 		this.board.kings[Convert.ToInt32(this.white)].in_check = false; 	
