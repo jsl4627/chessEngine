@@ -1,5 +1,6 @@
 using System;
 using System.Collections;  
+using System.Collections.Generic; 
 
 using System.ComponentModel.DataAnnotations; 
 
@@ -199,13 +200,13 @@ public class XMovesAheadPlayer : Player{
 		} 
 		return headCount; 
 	}
-	public Dynarray<Board> prune_successors(Dynarray<Board> successors, bool white, Board config){ 
-		Dynarray<Board> pruned_successors = new Dynarray<Board>();
+	public List<Board> prune_successors(List<Board> successors, bool white, Board config){ 
+		List<Board> pruned_successors = new List<Board>();
 		int config_body_count = head_count(config, !white); 
 		bool free_piece = false;  
-		for(int i = 0; i < successors.size; i++){
+		for(int i = 0; i < successors.Count; i++){
 			bool pruned = false;  
-			Board current_successor = successors.get(i); 
+			Board current_successor = successors[i]; 
 			// check if the rook pawn or knight pawn was moved
 			if(current_successor.board[3, 0] != null || current_successor.board[3, 1] != null || current_successor.board[3, 6] != null || current_successor.board[3, 7] != null){
 				pruned = true; 
@@ -257,14 +258,14 @@ public class XMovesAheadPlayer : Player{
 			
 	
 			if(!pruned){ 
-				pruned_successors.append(current_successor); 
+				pruned_successors.Add(current_successor); 
 			} 
 		} 
 		return pruned_successors; 
 	} 
 
 	public obj MiniMax(Board config, int depth, bool white, Hashtable choiceTable, int alpha, int beta, int R, bool null_move, bool cut){ 
-		Dynarray<Board> successors = config.getSuccessors(white);
+		List<Board> successors = config.getSuccessors(white);
 		
 		if(depth == 0 || config.checkMate(white)){ 
 			int score = evaluate_config4(config); 
@@ -319,16 +320,16 @@ public class XMovesAheadPlayer : Player{
 				//////////////////////	
 				 
 				//successors = prune_successors(successors, this.white, config); 
-				for(int i = 0; i < successors.size; i++){
+				for(int i = 0; i < successors.Count; i++){
 						new_obj = null;
 
 
-						if(choiceTable.ContainsKey(successors.get(i).ToString())){ 
-							new_obj = new obj(successors.get(i), (int) choiceTable[successors.get(i).ToString()], choiceTable); 
+						if(choiceTable.ContainsKey(successors[i].ToString())){ 
+							new_obj = new obj(successors[i], (int) choiceTable[successors[i].ToString()], choiceTable); 
 						}	 
 						else{
 															 
-							new_obj = this.MiniMax(successors.get(i), depth - 1, !white, choiceTable, max_score, beta, R, null_move, cut);
+							new_obj = this.MiniMax(successors[i], depth - 1, !white, choiceTable, max_score, beta, R, null_move, cut);
 						}
 					if(new_obj != null){ 
 						choiceTable = new_obj.choiceTable; 
@@ -343,7 +344,7 @@ public class XMovesAheadPlayer : Player{
 					}		 
 				}
 				if(max_index > -1){
-					return new obj(successors.get(max_index), max_score, choiceTable); 
+					return new obj(successors[max_index], max_score, choiceTable); 
 				} 
 				else{ 
 					return null; 
@@ -353,13 +354,13 @@ public class XMovesAheadPlayer : Player{
 				int min_score = 1000; 
 				int min_index = -1;
 				//successors = prune_successors(successors, !this.white, config); 
-				for(int i = 0; i < successors.size; i++){
+				for(int i = 0; i < successors.Count; i++){
 					obj new_obj = null; 
-					if(choiceTable.ContainsKey(successors.get(i).ToString())){ 
-						new_obj = new obj(successors.get(i), (int) choiceTable[successors.get(i).ToString()], choiceTable); 
+					if(choiceTable.ContainsKey(successors[i].ToString())){ 
+						new_obj = new obj(successors[i], (int) choiceTable[successors[i].ToString()], choiceTable); 
 					} 
 					else{ 
-						new_obj = this.MiniMax(successors.get(i), depth - 1, !white, choiceTable, alpha, min_score, R, null_move, cut); 
+						new_obj = this.MiniMax(successors[i], depth - 1, !white, choiceTable, alpha, min_score, R, null_move, cut); 
 					}
 					if(new_obj != null){ 
 						choiceTable = new_obj.choiceTable; 
@@ -375,7 +376,7 @@ public class XMovesAheadPlayer : Player{
 					}  
 				}
 				if(min_index > -1){ 	
-					return new obj(successors.get(min_index), min_score, choiceTable); 
+					return new obj(successors[min_index], min_score, choiceTable); 
 				} 
 				else{ 
 					return null; 

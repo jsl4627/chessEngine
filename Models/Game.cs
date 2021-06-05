@@ -1,4 +1,6 @@
 using System; 
+using System.Collections; 
+using System.Collections.Generic; 
 
 using System.ComponentModel.DataAnnotations; 
 
@@ -16,7 +18,7 @@ public class Game{
 		for(int i = 0; i < 8; i++){ 
 			for(int j = 0; j < 8; j++){ 
 				if(this.GameBoard.board[i, j] != null){
-					this.GameBoard.board[i, j].potential_captures = new Dynarray<Piece>();  
+					this.GameBoard.board[i, j].potential_captures = new List<Piece>();  
 					this.GameBoard.board[i, j].moves(GameBoard); 
 				} 
 			} 
@@ -37,10 +39,10 @@ public class Game{
 		} 
 
 		if(!this.check(on_move)){ 
-			Dynarray<Board> successors = this.GameBoard.getSuccessors(on_move.white); 
-			for(int i = 0; i < successors.size; i++){ 
-				Player virtual_player1 = new Player(on_move.white, successors.get(i)); 
-				Player virtual_player2 = new Player(!on_move.white, successors.get(i)); 
+			List<Board> successors = this.GameBoard.getSuccessors(on_move.white); 
+			for(int i = 0; i < successors.Count; i++){ 
+				Player virtual_player1 = new Player(on_move.white, successors[i]); 
+				Player virtual_player2 = new Player(!on_move.white, successors[i]); 
 				Game virtual_game = new Game(virtual_player1, virtual_player2); 
 				Player virtual_on_move = virtual_player1; 
 				if(on_move == this.Player2){
@@ -57,11 +59,11 @@ public class Game{
 		for(int i = 0; i < 8; i++){ 
 			if(this.GameBoard.board[0, i] != null && this.GameBoard.board[0, i].label == 'P'){ 
 				this.GameBoard.board[0, i] = new Queen('Q', 0, i, false); 
-				Dynarray<Coordinate> Moves = this.GameBoard.board[0, i].moves(this.GameBoard); 
+				List<Coordinate> Moves = this.GameBoard.board[0, i].moves(this.GameBoard); 
 			}
 			if(this.GameBoard.board[7, i] != null && this.GameBoard.board[0, i].label == 'P'){  
 				this.GameBoard.board[7, i] = new Queen('Q', 7, i, true); 
-				Dynarray<Coordinate> Moves = this.GameBoard.board[7, i].moves(this.GameBoard); 
+				List<Coordinate> Moves = this.GameBoard.board[7, i].moves(this.GameBoard); 
 			} 
 		}  
 	} 
@@ -72,11 +74,11 @@ public class Game{
 			last_move = this.Player2; 
 		} 
 		
-		for(int i = 0; i < last_move.Pieces.size; i++){
-			if(last_move.Pieces.get(i).active == true){
-				Dynarray<Coordinate> Moves = last_move.Pieces.get(i).moves(last_move.board);
-				for(int j = 0; j < last_move.Pieces.get(i).potential_captures.size; j++){
-					if(last_move.Pieces.get(i).potential_captures.get(j).label == 'K'){
+		for(int i = 0; i < last_move.Pieces.Count; i++){
+			if(last_move.Pieces[i].active == true){
+				List<Coordinate> Moves = last_move.Pieces[i].moves(last_move.board);
+				for(int j = 0; j < last_move.Pieces[i].potential_captures.Count; j++){
+					if(last_move.Pieces[i].potential_captures[j].label == 'K'){
 						return true; 
 					} 
 				} 
@@ -87,10 +89,10 @@ public class Game{
 
 	public bool checkMate(Player on_move){ 
 		if(this.check(on_move)){
-			Dynarray<Board> successors = this.GameBoard.getSuccessors(on_move.white); 
-			for(int i = 0; i < successors.size; i++){ 
-				Player virtual_player1 = new Player(on_move.white, successors.get(i));
-				Player virtual_player2 = new Player(!on_move.white, successors.get(i)); 
+			List<Board> successors = this.GameBoard.getSuccessors(on_move.white); 
+			for(int i = 0; i < successors.Count; i++){ 
+				Player virtual_player1 = new Player(on_move.white, successors[i]);
+				Player virtual_player2 = new Player(!on_move.white, successors[i]); 
 				Game virtual_game = new Game(virtual_player1, virtual_player2);  
 				Player virtual_on_move = virtual_player1; 
 				if(!virtual_game.check(virtual_on_move)){
@@ -107,13 +109,13 @@ public class Game{
 		if(on_move == this.Player1){
 			just_moved = this.Player2; 
 		} 
-		for(int i = 0; i < just_moved.Pieces.size; i++){ 
-			Piece current_piece = just_moved.Pieces.get(i); 
+		for(int i = 0; i < just_moved.Pieces.Count; i++){ 
+			Piece current_piece = just_moved.Pieces[i]; 
 			if(current_piece.label == 'P'){ 
 				if(current_piece.row == 0 || current_piece.col == 7){
 					this.GameBoard.board[current_piece.row, current_piece.col] = new Queen('Q', current_piece.row, current_piece.col, current_piece.white); 
 					this.GameBoard.board[current_piece.row, current_piece.col].moves(this.GameBoard); 
-					just_moved.Pieces.array[i] = this.GameBoard.board[current_piece.row, current_piece.col]; 
+					just_moved.Pieces[i] = this.GameBoard.board[current_piece.row, current_piece.col]; 
 				} 
 			} 
 		} 

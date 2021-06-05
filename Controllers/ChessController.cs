@@ -3,7 +3,8 @@ using Microsoft.AspNetCore.Http;
 using System;  
 using System.Text.Encodings.Web;
 using System.IO; 
-using System.Collections; 
+using System.Collections;
+using System.Collections.Generic;  
 using System.Web;
 using System.Diagnostics;  
 using MvcChess.Models;
@@ -66,7 +67,7 @@ namespace MvcChess.Controllers{
 			for(int i = 0; i < 8; i++){ 
 				for(int j = 0; j < 8; j++){ 
 					if(board.board[i, j] != null){ 
-						Dynarray<Coordinate> moves = board.board[i, j].moves(board); 
+						List<Coordinate> moves = board.board[i, j].moves(board); 
 					} 
 				} 
 			} 	
@@ -127,7 +128,7 @@ namespace MvcChess.Controllers{
 		}
 
 		//POST: /Chess/OpponentMove/ 
-		public IActionResult OpponentMove(int moves_ahead = 5){ 
+		public IActionResult OpponentMove(int moves_ahead = 6){ 
 			
 			string[] lines = System.IO.File.ReadAllLines("Write_Board_Pieces.txt"); 
 			
@@ -182,7 +183,7 @@ namespace MvcChess.Controllers{
 			for(int i = 0; i < 8; i++){ 
 				for(int j = 0; j < 8; j++){
 					if(board.board[i, j] != null){  
-						Dynarray<Coordinate> moves = board.board[i, j].moves(board); 
+						List<Coordinate> moves = board.board[i, j].moves(board); 
 					} 
 				} 
 			} 	 
@@ -269,7 +270,7 @@ namespace MvcChess.Controllers{
 			for(int i = 0; i < 8; i++){ 
 				for(int j = 0; j < 8; j++){ 
 					if(board.board[i, j] != null){ 	
-						Dynarray<Coordinate> moves = board.board[i, j].moves(board); 
+						List<Coordinate> moves = board.board[i, j].moves(board); 
 					} 
 				} 
 			} 

@@ -1,24 +1,25 @@
 using System; 
-
+using System.Collections; 
+using System.Collections.Generic; 
 using System.ComponentModel.DataAnnotations; 
 
 namespace MvcChess.Models { 
 public class Player{
 	public bool white; 
 	public Board board;
-	public Dynarray<Piece> Pieces; 
+	public List<Piece> Pieces; 
 	public King king;   
 	
 	public Player(bool white, Board board){ 
 		this.white = white; 
 		this.board = board;
 
-		this.Pieces = new Dynarray<Piece>(); 
+		this.Pieces = new List<Piece>(); 
 		 
 		for(int row = 0; row < 8; row++){ 
 			for(int col = 0; col < 8; col++){ 
 				if(this.board.board[row, col] != null && this.board.board[row, col].white == this.white){ 
-					this.Pieces.append(this.board.board[row, col]); 
+					this.Pieces.Add(this.board.board[row, col]); 
 				}
 			} 
 		}  	 

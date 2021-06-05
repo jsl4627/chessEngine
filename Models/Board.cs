@@ -1,4 +1,6 @@
 using System; 
+using System.Collections; 
+using System.Collections.Generic; 
 
 using System.ComponentModel.DataAnnotations; 
 
@@ -46,7 +48,7 @@ public class Board{
 		for(int i = 0; i < 8; i++){ 
 			for(int j = 0; j < 8; j++){ 
 				if(this.board[i, j] != null){ 
-					Dynarray<Coordinate> Moves = this.board[i, j].moves(this);
+					List<Coordinate> Moves = this.board[i, j].moves(this);
 				} 
 			} 
 		}
@@ -84,31 +86,19 @@ public class Board{
 		}
 	}  
 
-	public Dynarray<Board> getSuccessors(bool white){ 
-		Dynarray<Board> successors = new Dynarray<Board>();
+	public List<Board> getSuccessors(bool white){ 
+		List<Board> successors = new List<Board>();
 		for(int i = 0; i < 8; i++){ 
 			for(int j = 0; j < 8; j++){ 
 				if(this.board[i, j] != null){ 
 					if(this.board[i, j].white == white){
 						Piece current_piece = this.board[i, j];  
-						Dynarray<Coordinate> legal_moves = current_piece.moves(this);
-						for(int k = 0; k < legal_moves.size; k++){
+						List<Coordinate> legal_moves = current_piece.moves(this);
+						for(int k = 0; k < legal_moves.Count; k++){
 							Board copy = new Board(this);
 					
-							try{ 
-								bool is_king_in_check = copy.kings[Convert.ToInt32(white)].in_check; 
-							} 
-							catch(NullReferenceException e){ 
-								Console.WriteLine(copy); 
-							}
-							try{  
-								copy.kings[Convert.ToInt32(white)].in_check = false; 
-							} 
-							catch(NullReferenceException e){
-								copy.kings[Convert.ToInt32(white)].in_check = false;  
-							} 
 							Piece copy_piece = copy.board[i, j];  
-							Coordinate current_move = legal_moves.get(k); 
+							Coordinate current_move = legal_moves[k]; 
 							copy.board[current_move.row, current_move.col] = copy_piece; 
 							copy.board[copy_piece.row, copy_piece.col] = null; 
 							copy_piece.row = current_move.row; 
@@ -124,12 +114,12 @@ public class Board{
 							for(int a = 0; a < 8; a++){ 
 								for(int b = 0; b < 8; b++){ 
 									if(copy.board[a, b] != null){ 
-										Dynarray<Coordinate> Moves = copy.board[a, b].moves(copy); 
+										List<Coordinate> Moves = copy.board[a, b].moves(copy); 
 									} 
 								} 
 							}
 							if(!copy.kings[Convert.ToInt32(white)].in_check && copy.kings != null && copy.kings[Convert.ToInt32(white)] != null && copy.kings[Convert.ToInt32(!white)] != null){ 
-								successors.append(copy);  
+								successors.Add(copy);  
 							}
 						}
 					} 
@@ -140,9 +130,9 @@ public class Board{
 	}
 	public bool checkMate(bool white){ 
 		if(this.check(white)){ 
-			Dynarray<Board> Successors = this.getSuccessors(white);	
-			for(int i = 0; i < Successors.size; i++){ 
-				if(!Successors.get(i).check(white)){ 
+			List<Board> Successors = this.getSuccessors(white);	
+			for(int i = 0; i < Successors.Count; i++){ 
+				if(!Successors[i].check(white)){ 
 					return false; 
 				} 
 			} 

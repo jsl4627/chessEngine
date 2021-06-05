@@ -1,7 +1,8 @@
 using System; 
 
 using System.ComponentModel.DataAnnotations; 
-
+using System.Collections; 
+using System.Collections.Generic; 
 namespace MvcChess.Models { 
 public class Bishop : Piece{ 
 	
@@ -10,9 +11,9 @@ public class Bishop : Piece{
 		this.potential_captures = null; 
         }
 
-	public override Dynarray<Coordinate> moves(Board board){ 
-		Dynarray<Coordinate> legal_moves = new Dynarray<Coordinate>(); 
-		this.potential_captures = new Dynarray<Piece>(); 
+	public override List<Coordinate> moves(Board board){ 
+		List<Coordinate> legal_moves = new List<Coordinate>(); 
+		this.potential_captures = new List<Piece>(); 
 		int start_row = this.row; 
 		int start_col = this.col; 
 
@@ -20,13 +21,13 @@ public class Bishop : Piece{
 		int current_col = start_col + 1; 
 		
 		while(current_row < 8 && current_col < 8 && board.board[current_row, current_col] == null){ 
-			legal_moves.append(new Coordinate(current_row, current_col)); 
+			legal_moves.Add(new Coordinate(current_row, current_col)); 
 			current_row += 1; 
 			current_col += 1; 
 		} 
 		if(current_row < 8 && current_col < 8 && board.board[current_row, current_col].white != this.white){ 
-			legal_moves.append(new Coordinate(current_row, current_col)); 
-			this.potential_captures.append(board.board[current_row, current_col]);
+			legal_moves.Add(new Coordinate(current_row, current_col)); 
+			this.potential_captures.Add(board.board[current_row, current_col]);
 			if(board.board[current_row, current_col].label == 'K'){ 
 				board.kings[Convert.ToInt32(!this.white)].in_check = true; 
 			}  
@@ -36,13 +37,13 @@ public class Bishop : Piece{
 		current_col = start_col + 1; 
 
 		while(current_row >= 0 && current_col < 8 && board.board[current_row, current_col] == null){ 
-			legal_moves.append(new Coordinate(current_row, current_col)); 
+			legal_moves.Add(new Coordinate(current_row, current_col)); 
 			current_row -= 1; 
 			current_col += 1; 		
 		}
 		if(current_row >= 0 && current_col < 8 && board.board[current_row, current_col].white != this.white){ 
-			legal_moves.append(new Coordinate(current_row, current_col)); 
-			this.potential_captures.append(board.board[current_row, current_col]); 
+			legal_moves.Add(new Coordinate(current_row, current_col)); 
+			this.potential_captures.Add(board.board[current_row, current_col]); 
 			if(board.board[current_row, current_col].label == 'K'){ 
 				board.kings[Convert.ToInt32(!this.white)].in_check = true; 
 			} 
@@ -52,14 +53,14 @@ public class Bishop : Piece{
 		current_row = start_row + 1; 
 		current_col = start_col - 1; 
 		while(current_row < 8 && current_col >= 0 && board.board[current_row, current_col] == null){ 
-			legal_moves.append(new Coordinate(current_row, current_col)); 
+			legal_moves.Add(new Coordinate(current_row, current_col)); 
 			current_row += 1; 
 			current_col -= 1; 
 		} 
 
 		if(current_row < 8 && current_col >= 0 && board.board[current_row, current_col].white != this.white){ 
-			legal_moves.append(new Coordinate(current_row, current_col)); 
-			this.potential_captures.append(board.board[current_row, current_col]);
+			legal_moves.Add(new Coordinate(current_row, current_col)); 
+			this.potential_captures.Add(board.board[current_row, current_col]);
 			if(board.board[current_row, current_col].label == 'K'){ 
 				board.kings[Convert.ToInt32(!this.white)].in_check = true; 
 			} 
@@ -68,13 +69,13 @@ public class Bishop : Piece{
 		current_row = start_row - 1; 
 		current_col = start_col - 1; 
 		while(current_row >= 0 && current_col >= 0 && board.board[current_row, current_col] == null){ 
-			legal_moves.append(new Coordinate(current_row, current_col)); 
+			legal_moves.Add(new Coordinate(current_row, current_col)); 
 			current_row -= 1; 
 			current_col -= 1; 
 		}
 		if(current_row >= 0 && current_col >= 0 && board.board[current_row, current_col].white != this.white){ 
-			legal_moves.append(new Coordinate(current_row, current_col)); 
-			this.potential_captures.append(board.board[current_row, current_col]); 
+			legal_moves.Add(new Coordinate(current_row, current_col)); 
+			this.potential_captures.Add(board.board[current_row, current_col]); 
 			if(board.board[current_row, current_col].label == 'K'){ 
 				board.kings[Convert.ToInt32(!this.white)].in_check = true; 
 			} 

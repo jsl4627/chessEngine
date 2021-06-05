@@ -1,6 +1,9 @@
 using System; 
 
 using System.ComponentModel.DataAnnotations; 
+using System.Collections; 
+using System.Collections.Generic; 
+
 
 namespace MvcChess.Models { 
 public class King : Piece{ 
@@ -11,65 +14,65 @@ public class King : Piece{
 	}
 
 
-	public override Dynarray<Coordinate> moves(Board board){ 
-		Dynarray<Coordinate> legal_moves = new Dynarray<Coordinate>();
-		this.potential_captures = new Dynarray<Piece>(); 
+	public override List<Coordinate> moves(Board board){ 
+		List<Coordinate> legal_moves = new List<Coordinate>();
+		this.potential_captures = new List<Piece>(); 
 		if(this.row + 1 < 8){ 
 			if(board.board[this.row + 1, this.col] == null){
-				legal_moves.append(new Coordinate(this.row + 1, this.col));
+				legal_moves.Add(new Coordinate(this.row + 1, this.col));
 			} 
 			else if(board.board[this.row + 1, this.col].white != this.white){ 
-				legal_moves.append(new Coordinate(this.row + 1, this.col)); 
-				this.potential_captures.append(board.board[this.row + 1, this.col]); 
+				legal_moves.Add(new Coordinate(this.row + 1, this.col)); 
+				this.potential_captures.Add(board.board[this.row + 1, this.col]); 
 			} 
 		}  
 		if(this.row - 1 >=  0){ 
 			if(board.board[this.row - 1, this.col] == null){
-				legal_moves.append(new Coordinate(this.row - 1, this.col));
+				legal_moves.Add(new Coordinate(this.row - 1, this.col));
 			} 
 			else if(board.board[this.row - 1, this.col].white != this.white){ 
-				legal_moves.append(new Coordinate(this.row - 1, this.col)); 
-				this.potential_captures.append(board.board[this.row - 1, this.col]); 
+				legal_moves.Add(new Coordinate(this.row - 1, this.col)); 
+				this.potential_captures.Add(board.board[this.row - 1, this.col]); 
 			} 
 		} 
 		if(this.col + 1 < 8){ 
 			if(board.board[this.row, this.col + 1] == null){ 
-				legal_moves.append(new Coordinate(this.row, this.col + 1));
+				legal_moves.Add(new Coordinate(this.row, this.col + 1));
 			} 
 			else if(board.board[this.row, this.col + 1].white != this.white){ 
-				legal_moves.append(new Coordinate(this.row, this.col + 1));
-				this.potential_captures.append(board.board[this.row, this.col + 1]); 
+				legal_moves.Add(new Coordinate(this.row, this.col + 1));
+				this.potential_captures.Add(board.board[this.row, this.col + 1]); 
 			}
 		} 
    
 		if(this.col - 1 >= 0){ 
 			if(board.board[this.row, this.col - 1] == null){ 
 				
-				legal_moves.append(new Coordinate(this.row, this.col - 1));
+				legal_moves.Add(new Coordinate(this.row, this.col - 1));
 			} 
 			else if(board.board[this.row, this.col - 1].white != this.white){ 
-				legal_moves.append(new Coordinate(this.row, this.col - 1)); 
-				this.potential_captures.append(board.board[this.row, this.col - 1]);
+				legal_moves.Add(new Coordinate(this.row, this.col - 1)); 
+				this.potential_captures.Add(board.board[this.row, this.col - 1]);
 			} 
 		}  
 				
 		if(this.row + 1 < 8 && this.col + 1 < 8){ 
 			if(board.board[this.row + 1, this.col + 1] == null){ 
 				
-				legal_moves.append(new Coordinate(this.row + 1, this.col + 1)); 
+				legal_moves.Add(new Coordinate(this.row + 1, this.col + 1)); 
 			} 
 			else if(board.board[this.row + 1, this.col + 1].white != this.white){ 
-				legal_moves.append(new Coordinate(this.row + 1, this.col + 1)); 
-				this.potential_captures.append(board.board[this.row + 1, this.col + 1]); 	
+				legal_moves.Add(new Coordinate(this.row + 1, this.col + 1)); 
+				this.potential_captures.Add(board.board[this.row + 1, this.col + 1]); 	
 			}
 		}	
 		if(this.row + 1 < 8 && this.col - 1 >= 0){ 
 			if(board.board[this.row + 1, this.col - 1] == null){
-				legal_moves.append(new Coordinate(this.row + 1, this.col - 1)); 
+				legal_moves.Add(new Coordinate(this.row + 1, this.col - 1)); 
 			}
 			else if(board.board[this.row + 1, this.col - 1].white != this.white){ 
-				legal_moves.append(new Coordinate(this.row + 1, this.col - 1)); 
-				this.potential_captures.append(board.board[this.row + 1, this.col - 1]); 
+				legal_moves.Add(new Coordinate(this.row + 1, this.col - 1)); 
+				this.potential_captures.Add(board.board[this.row + 1, this.col - 1]); 
 			} 
 		}
 			 
@@ -78,21 +81,21 @@ public class King : Piece{
 		if(this.row - 1 >= 0 && this.col + 1 < 8){
 			if(board.board[this.row - 1, this.col + 1] == null){ 
 				
-				legal_moves.append(new Coordinate(this.row - 1, this.col + 1)); 
+				legal_moves.Add(new Coordinate(this.row - 1, this.col + 1)); 
 		 	}
 			else if(board.board[this.row - 1, this.col + 1].white != this.white){ 
-				legal_moves.append(new Coordinate(this.row - 1, this.col + 1)); 
-				this.potential_captures.append(board.board[this.row - 1, this.col + 1]); 
+				legal_moves.Add(new Coordinate(this.row - 1, this.col + 1)); 
+				this.potential_captures.Add(board.board[this.row - 1, this.col + 1]); 
 			} 
 		} 
 
 		if(this.row - 1 >= 0 && this.col - 1 >= 0){ 
 			if(board.board[this.row - 1, this.col - 1] == null){	
-				legal_moves.append(new Coordinate(this.row - 1, this.col - 1));
+				legal_moves.Add(new Coordinate(this.row - 1, this.col - 1));
 			}
 			else if(board.board[this.row - 1, this.col - 1].white != this.white){ 
-				legal_moves.append(new Coordinate(this.row - 1, this.col - 1)); 
-				this.potential_captures.append(board.board[this.row - 1, this.col - 1]); 
+				legal_moves.Add(new Coordinate(this.row - 1, this.col - 1)); 
+				this.potential_captures.Add(board.board[this.row - 1, this.col - 1]); 
 			} 
  
 		}
