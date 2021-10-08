@@ -93,7 +93,73 @@ namespace MvcChess.Controllers{
 			return View(new Board()); 
 		}
 
-
+		//
+		// POST: /Chess/Successors/ 
+		public IActionResult Successors(){ 
+			
+			string[] lines = System.IO.File.ReadAllLines("Write_Board_Pieces.txt"); 
+			
+			string[] colors = System.IO.File.ReadAllLines("Write_Board_Colors.txt"); 
+		
+			Piece[,] board_array = new Piece[8, 8];
+			King[] kings = new King[2];  
+			for(int i = 0; i < 8; i++){ 
+				char[] pieces_line = lines[i].Replace(" ", String.Empty).ToCharArray(); 
+				char[] colors_line = colors[i].Replace(" ", String.Empty).ToCharArray();
+				for(int j = 0; j < 8; j++){ 
+					if(pieces_line[j] == '.'){ 
+						board_array[i, j] = null; 
+					}
+					else{
+						bool white = Char.ToUpper(pieces_line[j]) == pieces_line[j];  
+						if(pieces_line[j] == 'P' || pieces_line[j] == 'p'){ 
+							board_array[i, j] = new Piece('P', i, j, white);
+						}
+						else if(pieces_line[j] == 'R' || pieces_line[j] == 'r'){ 
+							board_array[i, j] = new Rook('R', i, j, white); 
+						} 
+						else if(pieces_line[j] == 'N' || pieces_line[j] == 'n'){ 
+							board_array[i, j] = new Knight('N', i, j, white); 
+						} 
+						else if(pieces_line[j] == 'B' || pieces_line[j] == 'b'){ 
+							board_array[i, j] = new Bishop('B', i, j, white); 
+						} 
+						else if(pieces_line[j] == 'Q' || pieces_line[j] == 'q'){ 
+							board_array[i, j] = new Queen('Q', i, j, white); 
+						} 
+						else if(pieces_line[j] == 'K' || pieces_line[j] == 'k'){
+							board_array[i, j] = new King('K', i, j, white); 
+							kings[Convert.ToInt32(white)] =  (King) board_array[i, j];
+							kings[Convert.ToInt32(white)].in_check = false; 
+						} 
+						else if(pieces_line[j] == 'X' || pieces_line[j] == 'x'){ 
+							board_array[i, j] = new King('K', i, j, white); 
+							kings[Convert.ToInt32(white)] = (King) board_array[i, j]; 
+							kings[Convert.ToInt32(white)].in_check = true; 
+						} 
+										
+					}
+				}
+				
+			}
+			Board board = new Board(); 
+			board.board = board_array; 
+			board.kings = kings; 
+			board.checkmate = false; 
+			board.stalemate = false;  
+			for(int i = 0; i < 8; i++){ 
+				for(int j = 0; j < 8; j++){ 
+					if(board.board[i, j] != null){ 	
+						List<Coordinate> moves = board.board[i, j].moves(board); 
+					} 
+				} 
+			} 
+			List<Board> successors = board.getSuccessors(true); 
+			for(int i = 0; i < successors.Count; i++){ 
+				Console.WriteLine(successors[i]); 
+			} 
+			return RedirectToAction("Game");  
+		} 
 		// 
 		// GET: /Chess/Start  
 		public IActionResult Start(){ 
@@ -128,7 +194,7 @@ namespace MvcChess.Controllers{
 		}
 
 		//POST: /Chess/OpponentMove/ 
-		public IActionResult OpponentMove(int moves_ahead = 6){ 
+		public IActionResult OpponentMove(int moves_ahead = 4){ 
 			
 			string[] lines = System.IO.File.ReadAllLines("Write_Board_Pieces.txt"); 
 			

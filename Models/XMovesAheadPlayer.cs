@@ -12,11 +12,15 @@ public class XMovesAheadPlayer : Player{
 		public Board config; 
 		public int score; 
 		public Hashtable choiceTable; 
+		public Stack<String> predicessors;
+		public Hashtable gameTrees;  
 		
-		public obj(Board config, int score, Hashtable choiceTable){ 
+		public obj(Board config, int score, Hashtable choiceTable, Stack<String> predicessors, Hashtable gameTrees){ 
 			this.config = config; 
 			this.score = score; 
-			this.choiceTable = choiceTable; 
+			this.choiceTable = choiceTable;
+			this.predicessors = predicessors;
+			this.gameTrees = gameTrees;  
 		} 	
 	}  
 	
@@ -188,7 +192,122 @@ public class XMovesAheadPlayer : Player{
 			total_score += times(this.aux[i], board_vector[i]);
 		}  
 		return total_score; 
-	} 
+	}
+ 
+	public int evaluate_config5(Board config, bool white){ 
+		int[] board_vector = new int[64];
+		int[,] position_matrix = new int[8, 8];
+		int[] position_vector = new int[64];  
+		position_matrix[0, 0] = 8; 
+		position_matrix[0, 1] = 8; 
+		position_matrix[0, 2] = 8; 
+		position_matrix[0, 3] = 8; 
+		position_matrix[0, 4] = 8; 
+		position_matrix[0, 5] = 8; 
+		position_matrix[0, 6] = 8; 
+		position_matrix[0, 7] = 8;
+		
+		position_matrix[1, 0] = 8;  
+		position_matrix[1, 1] = 8; 
+		position_matrix[1, 2] = 8; 
+		position_matrix[1, 3] = 8; 
+		position_matrix[1, 4] = 8; 
+		position_matrix[1, 5] = 8; 
+		position_matrix[1, 6] = 8; 
+		position_matrix[1, 7] = 8;
+
+		 
+		position_matrix[2, 0] = 8;  
+		position_matrix[2, 1] = 12; 
+		position_matrix[2, 2] = 12; 
+		position_matrix[2, 3] = 18; 
+		position_matrix[2, 4] = 18; 
+		position_matrix[2, 5] = 12; 
+		position_matrix[2, 6] = 12; 
+		position_matrix[2, 7] = 8;
+
+		 
+		position_matrix[3, 0] = 8;  
+		position_matrix[3, 1] = 12; 
+		position_matrix[3, 2] = 12; 
+		position_matrix[3, 3] = 27; 
+		position_matrix[3, 4] = 27; 
+		position_matrix[3, 5] = 12; 
+		position_matrix[3, 6] = 12; 
+		position_matrix[3, 7] = 8;
+
+		 
+		position_matrix[4, 0] = 8;  
+		position_matrix[4, 1] = 12; 
+		position_matrix[4, 2] = 12; 
+		position_matrix[4, 3] = 27; 
+		position_matrix[4, 4] = 27; 
+		position_matrix[4, 5] = 12; 
+		position_matrix[4, 6] = 12; 
+		position_matrix[4, 7] = 8; 
+
+		
+		position_matrix[5, 0] = 8;  
+		position_matrix[5, 1] = 12; 
+		position_matrix[5, 2] = 12; 
+		position_matrix[5, 3] = 18; 
+		position_matrix[5, 4] = 18; 
+		position_matrix[5, 5] = 12; 
+		position_matrix[5, 6] = 12; 
+		position_matrix[5, 7] = 8;
+
+		
+		position_matrix[6, 0] = 8;  
+		position_matrix[6, 1] = 8; 
+		position_matrix[6, 2] = 8; 
+		position_matrix[6, 3] = 8; 
+		position_matrix[6, 4] = 8; 
+		position_matrix[6, 5] = 8; 
+		position_matrix[6, 6] = 8; 
+		position_matrix[6, 7] = 8;
+
+		
+		position_matrix[7, 0] = 8;  
+		position_matrix[7, 1] = 8; 
+		position_matrix[7, 2] = 8; 
+		position_matrix[7, 3] = 8; 
+		position_matrix[7, 4] = 8; 
+		position_matrix[7, 5] = 8; 
+		position_matrix[7, 6] = 8; 
+		position_matrix[7, 7] = 8;
+		int board_vector_index = 0; 
+		for(int i = 0; i < 8; i++){ 
+			for(int j = 0; j < 8; j++){
+				if(config.board[i, j] == null){ 
+					board_vector[board_vector_index] = 0; 
+				} 
+				else if(config.board[i, j].white == white){ 
+					board_vector[board_vector_index] = config.board[i, j].points;
+			 
+				} 
+				
+				else{ 
+					board_vector[board_vector_index] = times(-1, config.board[i, j].points); 
+				 
+				} 
+				position_vector[board_vector_index] = position_matrix[i, j]; 
+				board_vector_index++; 
+			}
+		}
+		// 8 8 8 8 8 8 8 8
+		// 8 8 8 8 8 8 8 8 
+		// 8 12 12 18 18 12 12 8 
+		// 8 12 12 27 27 12 12 8  
+		// 8 12 12 27 27 12 12 8 
+		// 8 12 12 18 18 12 12 8 
+		// 8 8 8 8 8 8 8 8 
+		// 8 8 8 8 8 8 8 8 	
+		int total_score = 0; 
+		for(int i = 0; i < 64; i++){ 
+			total_score += times(position_vector[i], board_vector[i]);
+		}  
+		return total_score; 
+	}
 	public int head_count(Board config, bool white){
 		int headCount = 0; 
 		for(int i = 0; i < 8; i++){ 
@@ -262,17 +381,37 @@ public class XMovesAheadPlayer : Player{
 			} 
 		} 
 		return pruned_successors; 
+	}
+	public int material_evaluation(Board config, bool white){
+		int score = 0; 
+		for(int i = 0; i < 8; i++){ 
+			for(int j = 0; j < 8; j++){ 
+				if(config.board[i, j] != null && config.board[i, j].label != 'K'){ 
+					if(config.board[i, j].white == white){ 
+						score += config.board[i, j].points;
+					} 
+					else{ 
+						score -= config.board[i, j].points;  
+					} 
+				} 
+			} 
+		} 
+		return score; 
 	} 
+ 
 
-	public obj MiniMax(Board config, int depth, bool white, Hashtable choiceTable, int alpha, int beta, int R, bool null_move, bool cut){ 
+	public obj MiniMax(Board config, int depth, bool white, Hashtable choiceTable, Hashtable gameTree, Stack<String> predicessors, int alpha, int beta, int R, bool null_move, bool cut){ 
+		predicessors.Push(config.ToString()); 
 		List<Board> successors = config.getSuccessors(white);
-		
 		if(depth == 0 || config.checkMate(white)){ 
-			int score = evaluate_config4(config); 
+			int score = evaluate_config5(config, white); 
 			if(!null_move && !cut){
 				choiceTable.Add(config.ToString(), score);  
 			} 
-			return new obj(config, score, choiceTable); 
+			Stack<String> GameTree = new Stack<String>(new Stack<String>(predicessors));
+			gameTree.Add(config.ToString(), gameTree);  
+			predicessors.Pop(); 
+			return new obj(config, score, choiceTable, predicessors, gameTree); 
 		}
 		else{
 			if(this.white == white){ 
@@ -286,7 +425,8 @@ public class XMovesAheadPlayer : Player{
 				//if(new_obj != null && new_obj.score > beta){ 
 				//	return new obj(config, beta, choiceTable); 
 				//}
-				
+				///////////////////////
+	
 				// multi-cut pruning 
 				//if(!cut){ 
 					//int M = 6 <= successors.size?6:successors.size; 
@@ -294,7 +434,7 @@ public class XMovesAheadPlayer : Player{
 					//int c = 0;  
 					//if(depth >= 2 && !null_move && !cut && max_score > -1000){ 
 						//for(int k = 0; k < M; k++){ 
-							//new_obj = this.MiniMax(successors.get(k), 1, !white, choiceTable, max_score, beta, R, null_move, true);  
+							//new_obj = this.MiniMax(successors.get(k), 1, !white, choiceTable, predicessors, max_score, beta, R, null_move, true);  
 							//if(new_obj.score >= beta){
 								//c++;
 								//if(c == C){ 
@@ -321,32 +461,36 @@ public class XMovesAheadPlayer : Player{
 				 
 				//successors = prune_successors(successors, this.white, config); 
 				for(int i = 0; i < successors.Count; i++){
+					if(!predicessors.Contains(successors[i].ToString())){ 
 						new_obj = null;
 
-
 						if(choiceTable.ContainsKey(successors[i].ToString())){ 
-							new_obj = new obj(successors[i], (int) choiceTable[successors[i].ToString()], choiceTable); 
+							new_obj = new obj(successors[i], (int) choiceTable[successors[i].ToString()], choiceTable, predicessors, gameTree); 
 						}	 
 						else{
 															 
-							new_obj = this.MiniMax(successors[i], depth - 1, !white, choiceTable, max_score, beta, R, null_move, cut);
+							new_obj = this.MiniMax(successors[i], depth - 1, !white, choiceTable, gameTree, predicessors, max_score, beta, R, null_move, cut);
 						}
-					if(new_obj != null){ 
-						choiceTable = new_obj.choiceTable; 
-						
-						if(new_obj.score > max_score){ 
-							max_score = new_obj.score; 
-							max_index = i; 
-						}
-						if(new_obj.score >= beta){ 
-							return new obj(config, beta, choiceTable); 
-						}
+						if(new_obj != null){ 
+							choiceTable = new_obj.choiceTable; 
+							predicessors = new_obj.predicessors; 	
+							if(new_obj.score > max_score){ 
+								max_score = new_obj.score; 
+								max_index = i; 
+							}
+							if(new_obj.score >= beta){ 
+								predicessors.Pop();  
+								return new obj(config, beta, choiceTable, predicessors, gameTree); 
+							}
+						}	
 					}		 
 				}
 				if(max_index > -1){
-					return new obj(successors[max_index], max_score, choiceTable); 
+					predicessors.Pop(); 
+					return new obj(successors[max_index], max_score, choiceTable, predicessors, gameTree); 
 				} 
 				else{ 
+					predicessors.Pop(); 
 					return null; 
 				} 
 			} 
@@ -355,30 +499,36 @@ public class XMovesAheadPlayer : Player{
 				int min_index = -1;
 				//successors = prune_successors(successors, !this.white, config); 
 				for(int i = 0; i < successors.Count; i++){
-					obj new_obj = null; 
-					if(choiceTable.ContainsKey(successors[i].ToString())){ 
-						new_obj = new obj(successors[i], (int) choiceTable[successors[i].ToString()], choiceTable); 
-					} 
-					else{ 
-						new_obj = this.MiniMax(successors[i], depth - 1, !white, choiceTable, alpha, min_score, R, null_move, cut); 
-					}
-					if(new_obj != null){ 
-						choiceTable = new_obj.choiceTable; 
+					if(!predicessors.Contains(successors[i].ToString())){
+						obj new_obj = null; 
+						if(choiceTable.ContainsKey(successors[i].ToString())){ 
+							new_obj = new obj(successors[i], (int) choiceTable[successors[i].ToString()], choiceTable, predicessors, gameTree); 
+						} 
+						else{ 
+							new_obj = this.MiniMax(successors[i], depth - 1, !white, choiceTable, gameTree, predicessors, alpha, min_score, R, null_move, cut); 
+						}
+						if(new_obj != null){ 
+							choiceTable = new_obj.choiceTable; 
+							predicessors = new_obj.predicessors; 
 					
 						
-						if(new_obj.score < min_score){ 
-							min_score = new_obj.score; 
-							min_index = i; 
-						} 
-						if(new_obj.score <= alpha){
-							return new obj(config, alpha, choiceTable); 
+							if(new_obj.score < min_score){ 
+								min_score = new_obj.score; 
+								min_index = i; 
+							} 
+							if(new_obj.score <= alpha){
+								predicessors.Pop(); 
+								return new obj(config, alpha, choiceTable, predicessors, gameTree); 
+							}
 						}
-					}  
+					} 	 
 				}
 				if(min_index > -1){ 	
-					return new obj(successors[min_index], min_score, choiceTable); 
+					predicessors.Pop(); 
+					return new obj(successors[min_index], min_score, choiceTable, predicessors, gameTree); 
 				} 
-				else{ 
+				else{
+					predicessors.Pop();  
 					return null; 
 				} 
 			}
@@ -388,7 +538,7 @@ public class XMovesAheadPlayer : Player{
 	} 
 		 
 	public override void move(Piece piece, int row, int col){
- 		obj optimal_obj = this.MiniMax(this.board, this.depth, this.white, new Hashtable(), -1000, 1000, 1, false, false);
+ 		obj optimal_obj = this.MiniMax(this.board, this.depth, this.white, new Hashtable(), new Hashtable(), new Stack<String>(), -1000, 1000, 1, false, false);
 		this.board.board = optimal_obj.config.board;
 		this.board.kings = optimal_obj.config.kings; 
 		this.board.kings[Convert.ToInt32(this.white)].in_check = false; 	
