@@ -20,7 +20,9 @@ public class Rook : Piece{
 		int current_column = this.col + 1; 
 		while(current_column < 8 && board.board[this.row, current_column] == null){
 			legal_moves.Add(new Coordinate(this.row, current_column)); 
-			current_column++; 
+			current_column++;
+					
+			
 		}
 		if(current_column < 8 && board.board[this.row, current_column].white != this.white){ 
 			legal_moves.Add(new Coordinate(this.row, current_column)); 
@@ -45,8 +47,20 @@ public class Rook : Piece{
 		int current_row = this.row + 1; 
 		while(current_row < 8 && board.board[current_row, this.col] == null){
  			legal_moves.Add(new Coordinate(current_row, this.col)); 
-			current_row++; 
+			if(this.white == true && board.kings[Convert.ToInt32(!this.white)].can_castle_king == "yes"){ 
+				if(current_row == 7 && this.col == 5 || current_row == 7 && this.col == 6){ 
+					board.kings[Convert.ToInt32(!this.white)].can_castle_king = "no"; 
+				} 
+			} 
+			if(this.white == true && board.kings[Convert.ToInt32(!this.white)].can_castle_queen == "yes"){ 
+				if(current_row == 7 && this.col == 3 || current_row == 7 && this.col == 2 || current_row == 7 && this.col == 1){
+					board.kings[Convert.ToInt32(!this.white)].can_castle_queen = "no"; 
+				} 
+			}
+			current_row++;  
+					
 		}
+
 		if(current_row < 8 && board.board[current_row, this.col].white != this.white){ 
 			legal_moves.Add(new Coordinate(current_row, this.col)); 
 			this.potential_captures.Add(board.board[current_row, this.col]); 
@@ -57,7 +71,17 @@ public class Rook : Piece{
 			 
 		current_row= this.row - 1; 
 		while(current_row >= 0 && board.board[current_row, this.col] == null){ 
-			legal_moves.Add(new Coordinate(current_row, this.col)); 
+			legal_moves.Add(new Coordinate(current_row, this.col));
+			if(this.white == false && board.kings[Convert.ToInt32(!this.white)].can_castle_king == "yes"){ 
+				if(current_row == 0 && this.col == 5 || current_row == 0 && this.col == 0){ 
+					board.kings[Convert.ToInt32(!this.white)].can_castle_king = "no"; 
+				} 
+			} 
+			if(this.white == false && board.kings[Convert.ToInt32(!this.white)].can_castle_queen == "yes"){ 
+				if(current_row == 0 && this.col == 3 || current_row == 0 && this.col == 2 || current_row == 0 && this.col == 1){ 
+					board.kings[Convert.ToInt32(!this.white)].can_castle_queen = "no"; 
+				} 
+			} 
 			current_row--; 
 		} 
 		if(current_row >= 0 && board.board[current_row, this.col].white != this.white){ 

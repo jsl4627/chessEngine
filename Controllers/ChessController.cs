@@ -19,7 +19,10 @@ namespace MvcChess.Controllers{
 			
 			string[] colors = System.IO.File.ReadAllLines("Write_Board_Colors.txt"); 
 			Piece[,] board_array = new Piece[8, 8];
-			King[] kings = new King[2];  
+			King[] kings = new King[2];
+
+			 
+			 
 			for(int i = 0; i < 8; i++){ 
 				char[] pieces_line = lines[i].Replace(" ", String.Empty).ToCharArray(); 
 				char[] colors_line = colors[i].Replace(" ", String.Empty).ToCharArray();
@@ -61,7 +64,13 @@ namespace MvcChess.Controllers{
 			}
 			Board board = new Board(); 
 			board.board = board_array; 
-			board.kings = kings; 
+			board.kings = kings;
+			 
+			string[] conditions = System.IO.File.ReadAllLines("conditions.txt"); 
+			board.kings[0].can_castle_king = conditions[0]; 
+			board.kings[1].can_castle_king = conditions[1]; 
+			board.kings[0].can_castle_queen = conditions[2]; 
+			board.kings[1].can_castle_queen = conditions[3]; 
 			board.checkmate = false; 
 			board.stalemate = false;
 			for(int i = 0; i < 8; i++){ 
@@ -144,7 +153,13 @@ namespace MvcChess.Controllers{
 			}
 			Board board = new Board(); 
 			board.board = board_array; 
-			board.kings = kings; 
+			board.kings = kings;
+			 
+			string[] conditions = System.IO.File.ReadAllLines("conditions.txt"); 
+			board.kings[0].can_castle_king = conditions[0]; 
+			board.kings[1].can_castle_king = conditions[1]; 
+			board.kings[0].can_castle_queen = conditions[2]; 
+			board.kings[1].can_castle_queen = conditions[3]; 
 			board.checkmate = false; 
 			board.stalemate = false;  
 			for(int i = 0; i < 8; i++){ 
@@ -178,9 +193,18 @@ namespace MvcChess.Controllers{
 			file.Close(); 
 
 			file = new("Write_Board_Colors.txt"); 
-			file.Write(GameBoard.BoardColors()); 
+			file.WriteLine(GameBoard.BoardColors()); 
 			file.Flush(); 
-			file.Close(); 
+			file.Close();
+
+			// Write can_castle_king and can_castle_queen to a file called "conditions.txt". 
+			file = new("conditions.txt");
+			file.Write(game.GameBoard.kings[0].can_castle_king + "\n"); 
+			file.Write(game.GameBoard.kings[1].can_castle_king + "\n"); 
+			file.Write(game.GameBoard.kings[0].can_castle_queen + "\n"); 
+			file.Write(game.GameBoard.kings[1].can_castle_queen + "\n"); 
+			file.Flush(); 
+			file.Close();  	 
 
 			return RedirectToAction("Game");  
 		}  
@@ -244,6 +268,12 @@ namespace MvcChess.Controllers{
 			Board board = new Board(); 
 			board.board = board_array; 
 			board.kings = kings; 
+			
+			string[] conditions = System.IO.File.ReadAllLines("conditions.txt"); 
+			board.kings[0].can_castle_king = conditions[0]; 
+			board.kings[1].can_castle_king = conditions[1]; 
+			board.kings[0].can_castle_queen = conditions[2]; 
+			board.kings[1].can_castle_queen = conditions[3]; 
 			board.checkmate = false; 
 			board.stalemate = false;  
 			for(int i = 0; i < 8; i++){ 
@@ -277,6 +307,16 @@ namespace MvcChess.Controllers{
 			file.Flush(); 
 			file.Close(); 
 
+			
+			// Write can_castle_king and can_castle_queen to a file called "conditions.txt". 
+			file = new("conditions.txt");
+			file.Write(game.GameBoard.kings[0].can_castle_king + "\n"); 
+			file.Write(game.GameBoard.kings[1].can_castle_king + "\n"); 
+			file.Write(game.GameBoard.kings[0].can_castle_queen + "\n"); 
+			file.Write(game.GameBoard.kings[1].can_castle_queen + "\n"); 
+			file.Flush(); 
+			file.Close();  	 
+	
 			return RedirectToAction("Game"); 
 
 		} 	
@@ -331,6 +371,12 @@ namespace MvcChess.Controllers{
 			Board board = new Board(); 
 			board.board = board_array; 
 			board.kings = kings; 
+			
+			string[] conditions = System.IO.File.ReadAllLines("conditions.txt"); 
+			board.kings[0].can_castle_king = conditions[0]; 
+			board.kings[1].can_castle_king = conditions[1]; 
+			board.kings[0].can_castle_queen = conditions[2]; 
+			board.kings[1].can_castle_queen = conditions[3]; 
 			board.checkmate = false; 
 			board.stalemate = false;  
 			for(int i = 0; i < 8; i++){ 
@@ -357,6 +403,15 @@ namespace MvcChess.Controllers{
 			file.Write(game.GameBoard.BoardColors()); 
 			file.Flush(); 
 			file.Close(); 
+			
+			// Write can_castle_king and can_castle_queen to a file called "conditions.txt". 
+			file = new("conditions.txt");
+			file.Write(game.GameBoard.kings[0].can_castle_king + "\n"); 
+			file.Write(game.GameBoard.kings[1].can_castle_king + "\n"); 
+			file.Write(game.GameBoard.kings[0].can_castle_queen + "\n"); 
+			file.Write(game.GameBoard.kings[1].can_castle_queen + "\n"); 
+			file.Flush(); 
+			file.Close();  	 
 
 			return RedirectToAction("Game"); 
 			

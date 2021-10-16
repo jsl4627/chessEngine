@@ -45,7 +45,17 @@ public class Queen : Piece{
 		int start_row = this.row; 
 		int current_row = this.row + 1; 
 		while(current_row < 8 && board.board[current_row, this.col] == null){
- 			legal_moves.Add(new Coordinate(current_row, this.col)); 
+ 			legal_moves.Add(new Coordinate(current_row, this.col));
+			if(this.white == true && board.kings[Convert.ToInt32(!this.white)].can_castle_king == "yes"){ 
+				if(current_row == 7 && this.col == 5 || current_row == 7 && this.col == 6){ 
+					board.kings[Convert.ToInt32(!this.white)].can_castle_king = "no"; 
+				} 
+			} 
+			if(this.white == true && board.kings[Convert.ToInt32(!this.white)].can_castle_queen == "yes"){ 
+				if(current_row == 7 && this.col == 3 || current_row == 7 && this.col == 2 || current_row == 7 && this.col == 1){ 
+					board.kings[Convert.ToInt32(!this.white)].can_castle_queen = "no"; 
+				} 
+			} 
 			current_row++; 
 		} 
 		if(current_row < 8 && board.board[current_row, this.col].white != this.white){ 
@@ -58,6 +68,17 @@ public class Queen : Piece{
 		current_row= this.row - 1; 
 		while(current_row >= 0 && board.board[current_row, this.col] == null){ 
 			legal_moves.Add(new Coordinate(current_row, this.col)); 
+			
+			if(this.white == false && board.kings[Convert.ToInt32(!this.white)].can_castle_king == "yes"){ 
+				if(current_row == 0 && this.col  == 5 || current_row == 0 && this.col == 6){ 
+					board.kings[Convert.ToInt32(!this.white)].can_castle_king = "no"; 
+				} 
+			} 
+			if(this.white == false && board.kings[Convert.ToInt32(!this.white)].can_castle_queen == "yes"){ 
+				if(current_row == 0 && this.col == 3 || current_row == 0 && this.col == 2 || current_row == 0 && this.col == 1){ 
+					board.kings[Convert.ToInt32(!this.white)].can_castle_queen = "no"; 
+				} 
+			}  
 			current_row--; 
 		}
 		if(current_row >= 0 && board.board[current_row, this.col].white != this.white){ 
@@ -72,6 +93,17 @@ public class Queen : Piece{
 		current_column = start_column + 1; 
 		while(current_row < 8 && current_column < 8 && board.board[current_row, current_column] == null){ 
 			legal_moves.Add(new Coordinate(current_row, current_column)); 
+			
+			if(this.white == true && board.kings[Convert.ToInt32(!this.white)].can_castle_king == "yes"){ 
+				if(current_row == 7 && this.col == 5 || current_row == 7 && this.col == 6){ 
+					board.kings[Convert.ToInt32(!this.white)].can_castle_king = "no"; 
+				} 
+			} 
+			if(this.white == true && board.kings[Convert.ToInt32(!this.white)].can_castle_queen == "yes"){ 
+				if(current_row == 7 && this.col == 3 || current_row == 7 && this.col == 2 || current_row == 7 && this.col == 1){ 
+					board.kings[Convert.ToInt32(!this.white)].can_castle_queen = "no"; 
+				} 
+			} 
 			current_row += 1; 
 			current_column += 1; 
 		} 
@@ -85,7 +117,17 @@ public class Queen : Piece{
 		current_row = start_row - 1; 
 		current_column = start_column + 1; 
 		while(current_row >= 0 && current_column < 8 && board.board[current_row, current_column] == null){ 
-			legal_moves.Add(new Coordinate(current_row, current_column)); 
+			legal_moves.Add(new Coordinate(current_row, current_column));
+			if(this.white == false && board.kings[Convert.ToInt32(!this.white)].can_castle_king == "yes"){ 
+				if(current_row == 0 && current_column == 5 || current_row == 0 && current_column == 6){ 
+					board.kings[Convert.ToInt32(!this.white)].can_castle_king = "no"; 
+				} 
+			} 
+			if(this.white == false && board.kings[Convert.ToInt32(!this.white)].can_castle_queen == "yes"){ 
+				if(current_row == 0 && current_column == 3 || current_row == 0 && current_column == 2 || current_row == 0 && current_column == 1){ 
+					board.kings[Convert.ToInt32(!this.white)].can_castle_queen = "no"; 
+				} 
+			}  
 			current_row -= 1; 
 			current_column += 1; 		
 		} 
@@ -101,6 +143,17 @@ public class Queen : Piece{
 		current_column = start_column - 1; 
 		while(current_row < 8 && current_column >= 0 && board.board[current_row, current_column] == null){ 
 			legal_moves.Add(new Coordinate(current_row, current_column)); 
+			
+			if(this.white == true && board.kings[Convert.ToInt32(!this.white)].can_castle_king == "yes"){ 
+				if(current_row == 7 && this.col == 5 || current_row == 7 && this.col == 6){ 
+					board.kings[Convert.ToInt32(!this.white)].can_castle_king = "no"; 
+				} 
+			} 
+			if(this.white == true && board.kings[Convert.ToInt32(!this.white)].can_castle_queen == "yes"){ 
+				if(current_row == 7 && this.col == 3 || current_row == 7 && this.col == 2 || current_row == 7 && this.col == 1){ 
+					board.kings[Convert.ToInt32(!this.white)].can_castle_queen = "no"; 
+				} 
+			} 
 			current_row += 1; 
 			current_column -= 1; 
 		} 
@@ -117,6 +170,17 @@ public class Queen : Piece{
 		current_column = start_column - 1; 
 		while(current_row >= 0 && current_column >= 0 && board.board[current_row, current_column] == null){ 
 			legal_moves.Add(new Coordinate(current_row, current_column)); 
+			
+			if(this.white == false && board.kings[Convert.ToInt32(!this.white)].can_castle_king == "yes"){ 
+				if(current_row == 0 && current_column == 5 || current_row == 0 && current_column == 6){ 
+					board.kings[Convert.ToInt32(!this.white)].can_castle_king = "no"; 
+				} 
+			} 
+			if(this.white == false && board.kings[Convert.ToInt32(!this.white)].can_castle_queen == "yes"){ 
+				if(current_row == 0 && current_column == 3 || current_row == 0 && current_column == 2 || current_row == 0 && current_column == 1){ 
+					board.kings[Convert.ToInt32(!this.white)].can_castle_queen = "no"; 
+				} 
+			}  
 			current_row -= 1; 
 			current_column -= 1; 
 		}

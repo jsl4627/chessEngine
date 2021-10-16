@@ -13,6 +13,29 @@ public class Knight : Piece{
 
 
 	public override List<Coordinate> moves(Board board){ 
+		
+		if(board.kings[1].can_castle_king != "never"){ 
+			if(this.row == 0 && this.col == 5 || this.row == 0 && this.col == 6){ 
+				board.kings[1].can_castle_king = "no";
+			} 
+		} 
+		if(board.kings[1].can_castle_queen != "never"){ 
+			if(this.row == 0 && this.col == 1 || this.row == 0 && this.col == 2 || this.row == 0 && this.col == 3){ 
+				board.kings[1].can_castle_queen = "no"; 
+			} 
+		} 
+		if(board.kings[0].can_castle_king != "never"){ 
+			if(this.row == 7 && this.col == 5 || this.row == 7 && this.col == 6){ 
+				board.kings[0].can_castle_king = "no"; 
+			} 
+		} 
+		if(board.kings[0].can_castle_queen != "never"){ 
+			if(this.row == 7 && this.col == 1 || this.row == 7 && this.col == 2 || this.row == 7 && this.col == 3){ 
+				board.kings[0].can_castle_queen = "no"; 
+			} 
+		}  
+
+
 		List<Coordinate> legal_moves = new List<Coordinate>();
 		this.potential_captures = new List<Piece>();
 		if(this.row + 2 < 8 && this.col + 1 < 8){

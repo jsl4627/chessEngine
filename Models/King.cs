@@ -7,10 +7,14 @@ using System.Collections.Generic;
 
 namespace MvcChess.Models { 
 public class King : Piece{ 
-	public bool in_check; 	
+	public bool in_check;
+	public String can_castle_king; 
+	public String can_castle_queen;  	
 	public King(char label, int row, int col, bool white) : base(label, row, col, white){
         	this.points = 1000;
-		this.in_check = false;  
+		this.in_check = false;
+		this.can_castle_king = "no"; 
+		this.can_castle_queen = "no";   
 	}
 
 

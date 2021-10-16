@@ -44,7 +44,7 @@ public class Board{
 		this.kings = new King[2]; 
 		this.kings[0] = (King) this.board[7, 4]; 
 		this.kings[1] = (King) this.board[0, 4]; 
-
+		
 		for(int i = 0; i < 8; i++){ 
 			for(int j = 0; j < 8; j++){ 
 				if(this.board[i, j] != null){ 
@@ -56,8 +56,14 @@ public class Board{
 	}
 
 	public Board(Board other){
+		if(other.kings[0] == null || other.kings[1] == null){ 
+			Console.WriteLine(other.ToString()); 
+		} 
+
 		this.board = new Piece[8,8];
-		this.kings = new King[2];  
+		this.kings = new King[2];
+
+		  
 		for(int i = 0; i < 8; i++){ 
 			for(int j = 0; j < 8; j++){ 
 				if(other.board[i, j] == null){ 
@@ -80,13 +86,35 @@ public class Board{
 				} 
 				else if(other.board[i, j].label == 'K'){ 
 					this.board[i, j] = new King(other.board[i, j].label, other.board[i, j].row, other.board[i, j].col, other.board[i, j].white); 
-					this.kings[Convert.ToInt32(other.board[i, j].white)] = (King) this.board[i, j]; 
-				} 
-			} 
+					this.kings[Convert.ToInt32(other.board[i, j].white)] = (King) this.board[i, j];
+				}
+			}
+			 
 		}
+		if(other.kings[0] == null){ 
+			Console.WriteLine(this.ToString()); 
+		} 	
+		if(this.kings[1] == null){ 
+			Console.WriteLine(other.ToString());
+			Console.WriteLine(other.kings[1].row); 
+			Console.WriteLine(other.kings[1].col); 
+		}
+		this.kings[0].can_castle_king = other.kings[0].can_castle_king;  
+		this.kings[1].can_castle_king = other.kings[1].can_castle_king; 
+		this.kings[0].can_castle_queen = other.kings[0].can_castle_queen; 
+		this.kings[1].can_castle_queen = other.kings[1].can_castle_queen; 
 	}  
 
-	public List<Board> getSuccessors(bool white){ 
+	public List<Board> getSuccessors(bool white){
+		if(this.kings[1] == null || this.kings[0] == null){ 
+			Console.WriteLine("King is null"); 
+		} 
+		if(this.kings[Convert.ToInt32(!white)].can_castle_king != "never"){ 
+			this.kings[Convert.ToInt32(!white)].can_castle_king = "yes"; 
+		} 
+		if(this.kings[Convert.ToInt32(!white)].can_castle_queen != "never"){ 
+			this.kings[Convert.ToInt32(!white)].can_castle_queen = "yes"; 
+		}  
 		List<Board> successors = new List<Board>();
 		for(int i = 0; i < 8; i++){ 
 			for(int j = 0; j < 8; j++){ 
@@ -95,8 +123,10 @@ public class Board{
 						Piece current_piece = this.board[i, j];  
 						List<Coordinate> legal_moves = current_piece.moves(this);
 						for(int k = 0; k < legal_moves.Count; k++){
+							if(this.kings[0] == null || this.kings[1] == null){ 
+								Console.WriteLine(this.ToString()); 
+							} 	
 							Board copy = new Board(this);
-					
 							Piece copy_piece = copy.board[i, j];  
 							Coordinate current_move = legal_moves[k]; 
 							copy.board[current_move.row, current_move.col] = copy_piece; 
@@ -104,9 +134,9 @@ public class Board{
 							copy_piece.row = current_move.row; 
 							copy_piece.col = current_move.col; 
 							copy_piece.moves_made++;
-							if(this.kings[Convert.ToInt32(!white)].row == copy_piece.row && this.kings[Convert.ToInt32(!white)].col == copy_piece.col){ 
-								copy.kings[Convert.ToInt32(!white)] = null; 
-							} 
+							//if(this.kings[Convert.ToInt32(!white)].row == copy_piece.row && this.kings[Convert.ToInt32(!white)].col == copy_piece.col){ 
+							//	copy.kings[Convert.ToInt32(!white)] = null; 
+							//} 
 							if(copy_piece.label == 'K'){
 								copy.kings[Convert.ToInt32(white)].row = copy_piece.row;
 								copy.kings[Convert.ToInt32(white)].col = copy_piece.col;	
@@ -119,6 +149,13 @@ public class Board{
 								} 
 							}
 							if(!copy.kings[Convert.ToInt32(white)].in_check && copy.kings != null && copy.kings[Convert.ToInt32(white)] != null && copy.kings[Convert.ToInt32(!white)] != null){ 
+								if(copy.kings[0] == null || copy.kings[1] == null){ 
+									Console.WriteLine("King is null");
+								} 
+								if(copy_piece.label == 'K'){ 
+									copy.kings[Convert.ToInt32(white)].can_castle_king = "never"; 
+									copy.kings[Convert.ToInt32(white)].can_castle_queen = "never"; 
+								}  
 								successors.Add(copy);  
 							}
 						}
@@ -126,6 +163,90 @@ public class Board{
 				}
 			}
 		}
+		if(this.kings[Convert.ToInt32(white)].can_castle_king == "yes"){ 
+			Board copy1 = new Board(this); 
+			if(white == true){ 
+				Piece copy_king = copy1.board[0, 4]; 
+				Piece copy_rook = copy1.board[0, 7]; 
+				copy1.board[0, 6] = copy1.board[0, 4]; 
+				copy1.board[0, 4] = null; 
+				copy1.board[0, 5] = copy_rook; 
+				copy1.board[0, 7] = null;
+				
+				copy1.kings[Convert.ToInt32(white)].row = 0; 
+				copy1.kings[Convert.ToInt32(white)].col = 6;	
+				copy1.kings[Convert.ToInt32(white)].can_castle_king = "never";
+				copy1.kings[Convert.ToInt32(white)].can_castle_queen = "never";   
+				if(copy1.kings[Convert.ToInt32(white)] == null){ 
+					Console.WriteLine("King is null"); 
+				}
+				successors.Add(copy1); 
+			} 
+			else{ 
+				Piece copy_king = copy1.board[7, 4]; 
+				Piece copy_rook = copy1.board[7, 7]; 
+				copy1.board[7, 6] = copy_king; 
+				copy1.board[7, 4] = null; 
+				copy1.board[7, 5] = copy_rook; 
+				copy1.board[7, 7] = null; 
+				
+				copy1.kings[Convert.ToInt32(white)].row = 7; 
+				copy1.kings[Convert.ToInt32(white)].col = 6; 	
+				
+				copy1.kings[Convert.ToInt32(white)].can_castle_king = "never"; 
+				copy1.kings[Convert.ToInt32(white)].can_castle_queen = "never";
+
+				if(copy1.kings[1] == null || copy1.kings[0] == null){ 
+					Console.WriteLine("King is null"); 
+				}  
+				successors.Add(copy1); 
+			} 
+		}
+		if(this.kings[Convert.ToInt32(white)].can_castle_queen == "yes"){ 
+			Board copy1 = new Board(this); 
+			if(white == true){ 
+				Piece copy_king = copy1.board[0, 4]; 
+				Piece copy_rook = copy1.board[0, 0]; 
+				copy1.board[0, 2] = copy1.board[0, 4]; 
+				copy1.board[0, 4] = null; 
+				copy1.board[0, 3] = copy_rook; 
+				copy1.board[0, 0] = null;
+
+				 
+				copy1.kings[Convert.ToInt32(white)].row = 0;
+				copy1.kings[Convert.ToInt32(white)].col = 2;	
+				
+				copy1.kings[Convert.ToInt32(white)].can_castle_king = "never"; 
+				copy1.kings[Convert.ToInt32(white)].can_castle_queen = "never"; 
+				
+				if(copy1.kings[1] == null || copy1.kings[0] == null){ 
+					Console.WriteLine("King is null"); 
+				}  
+
+				successors.Add(copy1); 
+			} 
+			else{ 
+				Piece copy_king = copy1.board[7, 4]; 
+				Piece copy_rook = copy1.board[7, 0]; 
+				copy1.board[7, 2] = copy1.board[7, 4]; 
+				copy1.board[7, 4] = null; 
+				copy1.board[7, 3] = copy_rook; 
+				copy1.board[7, 0] = null; 
+				
+				copy1.kings[Convert.ToInt32(white)].row = 7; 
+				copy1.kings[Convert.ToInt32(white)].col = 2; 
+				
+				copy1.kings[Convert.ToInt32(white)].can_castle_king = "never"; 
+				copy1.kings[Convert.ToInt32(white)].can_castle_queen = "never";
+				
+				
+				if(copy1.kings[1] == null || copy1.kings[0] == null){ 
+					Console.WriteLine("King is null"); 
+				}  
+				successors.Add(copy1); 
+			} 
+		}  
+				
 		return successors; 
 	}
 	public bool checkMate(bool white){ 
